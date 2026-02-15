@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: app_service
+    restart: always
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment: 
+      SERVER_PORT: ${SERVER_PORT}
+
+      PGSQL_EXCHANGE_HOST: ${PGSQL_EXCHANGE_HOST}
+      PGSQL_EXCHANGE_USER: ${PGSQL_EXCHANGE_USER}
+      PGSQL_EXCHANGE_PASSWORD: ${PGSQL_EXCHANGE_PASSWORD}
+      PGSQL_EXCHANGE_DATABASE: ${PGSQL_EXCHANGE_DATABASE}
+
+      AUTH_GENERAL_SALT: ${AUTH_GENERAL_SALT}
+      AUTH_SIGNING_KEY: ${AUTH_SIGNING_KEY}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL}
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${PGSQL_EXCHANGE_USER}
+      POSTGRES_PASSWORD: ${PGSQL_EXCHANGE_PASSWORD}
+      POSTGRES_DB: ${PGSQL_EXCHANGE_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
