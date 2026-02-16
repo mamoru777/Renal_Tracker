@@ -32,5 +32,5 @@ func NewClientPgsql(ctx context.Context, connectionURI string) (*sql.DB, error) 
 }
 
 func GetConnectionURI(host, user, password, database string) string {
-	return fmt.Sprintf("postgres://%v:%v@%v/%v", user, password, host, database)
+	return fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable", user, password, host, database)
 }

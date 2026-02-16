@@ -8,7 +8,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-const RegistrationV0MethodPath = "/user/reg"
+const RegistrationV0MethodPath = "/api/user/reg"
 
 type RegistrationV0Request struct {
 	Email      string    `json:"email"`

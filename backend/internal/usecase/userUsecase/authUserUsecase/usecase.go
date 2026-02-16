@@ -15,6 +15,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+
+	_ "renal_tracker/internal/usecase"
 )
 
 var (
@@ -34,6 +36,16 @@ func New(findUserByEmail findUserByEmail, updateUserInfo updateUserInfo) *UseCas
 	}
 }
 
+//		@Summary	Аутентификация пользователей
+//		@Tags		users
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param		params	body		usecase.Json{data=authPkg.AuthV0Request}	true	"request"
+//		@Success	200		{object}	usecase.Json{data=authPkg.AuthV0Response}
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Failure	404		{object}	usecase.ErrorResponse
+//		@Failure	500		{object}	usecase.ErrorResponse
+//		@Router		/api/user/auth [post]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "authUserUsecase").Logger()
 

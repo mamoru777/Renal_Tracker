@@ -13,12 +13,10 @@ type Config struct {
 	}
 
 	Auth struct {
-		GeneralSalt       string `env:"AUTH_GENERAL_SALT"`
-		SigningKey        string `env:"AUTH_SIGNING_KEY"`
-		AccessTokenTTL    string `env:"ACCESS_TOKEN_TTL"`
-		RefreshTokenTTL   string `env:"REFRESH_TOKEN_TTL"`
-		RootAdminLogin    string `env:"ROOT_ADMIN_LOGIN"`
-		RootAdminPassword string `env:"ROOT_ADMIN_PASSWORD"`
+		GeneralSalt     string `env:"AUTH_GENERAL_SALT"`
+		SigningKey      string `env:"AUTH_SIGNING_KEY"`
+		AccessTokenTTL  string `env:"ACCESS_TOKEN_TTL"`
+		RefreshTokenTTL string `env:"REFRESH_TOKEN_TTL"`
 	}
 }
 

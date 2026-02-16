@@ -83,6 +83,8 @@ func (di *DI) Init(ctx context.Context) error {
 
 	di.initServer()
 
+	di.initAPI()
+
 	return nil
 }
 
@@ -172,6 +174,21 @@ func (di *DI) initServer() {
 	log.Info().Msg("init server")
 
 	di.app = fiber.New()
+}
+
+func (di *DI) initAPI() {
+	log.Info().Msg("init api")
+
+	di.api = api.New(
+		di.app,
+		di.useCases.createUserUseCase,
+		di.useCases.authUserUsecase,
+		di.useCases.changePasswordUsecase,
+		di.useCases.checkEmailUsecase,
+		di.useCases.updateUserInfoUsecase,
+	)
+
+	di.api.Route()
 }
 
 func (di *DI) Start() error {

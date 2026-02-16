@@ -5,7 +5,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-const AuthV0MethodPath = "/user/auth"
+const AuthV0MethodPath = "/api/user/auth"
 
 type AuthV0Request struct {
 	Email    string `json:"email"`

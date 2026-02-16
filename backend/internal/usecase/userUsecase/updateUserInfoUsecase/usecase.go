@@ -5,6 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+
+	_ "renal_tracker/internal/usecase"
 )
 
 type UseCase struct {
@@ -19,6 +21,23 @@ func New(updateUserInfo updateUserInfo, findUserByID findUserByID) *UseCase {
 	}
 }
 
+//		@Summary	Обновление информации о пользователе
+//		@Tags		users
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param 		Authorization 	header 		string 		true 		"JWT access token" default "Bearer <token>"
+//		@Param 		Cookie 			header 		string 		true 		"Refresh token cookie" 		default 	"refreshToken=<token>"
+//		@Param		params	body		usecase.Json{data=updateInfoPkg.UpdateUserInfoV0Request}	true	"request"
+//		@Success	200		{object}	usecase.Json{data=updateInfoPkg.UpdateUserInfoV0Response}
+//		@Header 	200 	{string} 	accessToken "Новый access token"
+//		@Header 	200 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Header 	400 	{string} 	accessToken "Новый access token"
+//		@Header 	400 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	500		{object}	usecase.ErrorResponse
+//		@Header 	500 	{string} 	accessToken "Новый access token"
+//		@Header 	500 	{string} 	refreshToken "Новый refresh token"
+//		@Router		/api/user/updateInfo [post]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "updateUserInfoUsecase").Logger()
 

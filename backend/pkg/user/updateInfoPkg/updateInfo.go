@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const UpdateUserInfoV0MethodPath = "/user/updateInfo"
+const UpdateUserInfoV0MethodPath = "/api/user/updateInfo"
 
 type UpdateUserInfoV0Request struct {
 	Name       *string    `json:"name"`

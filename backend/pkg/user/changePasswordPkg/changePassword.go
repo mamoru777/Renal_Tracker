@@ -10,7 +10,7 @@ var (
 	ErrNewPassEqualToNew = errors.New("new pass is equal to new")
 )
 
-const ChangePasswordV0MethodPath = "/user/changePassword"
+const ChangePasswordV0MethodPath = "/api/user/changePassword"
 
 type ChangePasswordV0Request struct {
 	OldPassword string `json:"oldPassword"`

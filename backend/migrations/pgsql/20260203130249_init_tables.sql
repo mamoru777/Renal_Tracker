@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS rental.user (
     email VARCHAR NOT NULL UNIQUE,
     password_hash BYTEA NOT NULL,
     password_salt BYTEA NOT NULL,
-    birth TIMESTAMPT NOT NULL,
+    birth TIMESTAMP NOT NULL,
     sex rental."sex" NOT NULL,
     weight decimal,
     height decimal,

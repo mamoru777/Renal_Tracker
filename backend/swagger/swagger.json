@@ -1,0 +1,634 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/user/auth": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Аутентификация пользователей",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/authPkg.AuthV0Request"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/authPkg.AuthV0Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/changePassword": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Смена пароля",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Request"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/checkEmail": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Проверка на существование пользователя с указанной почтой",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Request"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/reg": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Регистрация пользователей",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/registrationPkg.RegistrationV0Request"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/registrationPkg.RegistrationV0Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/updateInfo": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Обновление информации о пользователе",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Request"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/usecase.Json"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "authPkg.AuthV0Request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "authPkg.AuthV0Response": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "changePasswordPkg.ChangePasswordV0Request": {
+            "type": "object",
+            "properties": {
+                "newPassword": {
+                    "type": "string"
+                },
+                "oldPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "changePasswordPkg.ChangePasswordV0Response": {
+            "type": "object"
+        },
+        "checkEmailPkg.CheckEmailV0Request": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "checkEmailPkg.CheckEmailV0Response": {
+            "type": "object",
+            "properties": {
+                "isExists": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pkg.Sex": {
+            "type": "string",
+            "enum": [
+                "male",
+                "female"
+            ],
+            "x-enum-varnames": [
+                "Male",
+                "Female"
+            ]
+        },
+        "registrationPkg.RegistrationV0Request": {
+            "type": "object",
+            "properties": {
+                "dateBirth": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "patronymic": {
+                    "type": "string"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "registrationPkg.RegistrationV0Response": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "updateInfoPkg.UpdateUserInfoV0Request": {
+            "type": "object",
+            "properties": {
+                "dateBirth": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "patronymic": {
+                    "type": "string"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "updateInfoPkg.UpdateUserInfoV0Response": {
+            "type": "object",
+            "properties": {
+                "dateBirth": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "patronymic": {
+                    "type": "string"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "usecase.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecase.Json": {
+            "type": "object"
+        }
+    }
+}

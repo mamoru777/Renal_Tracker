@@ -11,7 +11,7 @@ var (
 	ErrNewPassEqualToNew = errors.New("new pass is equal to new")
 )
 
-const CheckEmailV0MethodPath = "/user/checkEmail"
+const CheckEmailV0MethodPath = "/api/user/checkEmail"
 
 type CheckEmailV0Request struct {
 	Email string `json:"email"`

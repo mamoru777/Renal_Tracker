@@ -9,6 +9,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+
+	_ "renal_tracker/internal/usecase"
 )
 
 var (
@@ -27,6 +29,15 @@ func New(createUser createUser, findUserByEmail findUserByEmail) *UseCase {
 	}
 }
 
+//		@Summary	Регистрация пользователей
+//		@Tags		users
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param		params	body		usecase.Json{data=registrationPkg.RegistrationV0Request}	true	"request"
+//		@Success	200		{object}	usecase.Json{data=registrationPkg.RegistrationV0Response}
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Failure	500		{object}	usecase.ErrorResponse
+//		@Router		/api/user/reg [post]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "createUserUsecase").Logger()
 

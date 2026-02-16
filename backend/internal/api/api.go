@@ -13,7 +13,10 @@ import (
 	"renal_tracker/pkg/user/registrationPkg"
 	"renal_tracker/pkg/user/updateInfoPkg"
 
+	_ "renal_tracker/swagger"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
 )
 
 type API struct {
@@ -50,6 +53,8 @@ func (a *API) Route() {
 			"message": "pong",
 		})
 	})
+
+	a.app.Get("/swagger/*", swagger.HandlerDefault)
 
 	a.app.Post(registrationPkg.RegistrationV0MethodPath, a.createUserUseCase.Execute)
 
