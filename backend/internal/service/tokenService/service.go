@@ -36,7 +36,7 @@ func AuthMiddleware() fiber.Handler {
 				JSON(fiber.Map{"error": "refresh token is empty"})
 		}
 
-		refreshClaims, err := jwtManager.ParseToken[userModel.CustomClaims](c.Context(), accessToken)
+		refreshClaims, err := jwtManager.ParseToken[userModel.CustomClaims](c.Context(), refreshToken)
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).
 				JSON(fiber.Map{"error": "refresh token is expired"})
