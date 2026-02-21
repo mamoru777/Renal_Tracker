@@ -35,8 +35,8 @@ func New(findUserByID findUserByID, changePassword changePassword) *UseCase {
 //		@Produce	json
 //		@Param 		Authorization 	header 		string 		true 		"JWT access token" 	default "Bearer <token>"
 //		@Param 		Cookie 			header 		string 		true 		"Refresh token cookie" 		default 	"refreshToken=<token>"
-//		@Param		params	body		usecase.Json{data=changePasswordPkg.ChangePasswordV0Request}	true	"request"
-//		@Success	200		{object}	usecase.Json{data=changePasswordPkg.ChangePasswordV0Response}
+//		@Param		params	body		changePasswordPkg.ChangePasswordV0Request	true	"request"
+//		@Success	200		{object}	changePasswordPkg.ChangePasswordV0Response
 //		@Header 	200 	{string} 	accessToken "Новый access token"
 //		@Header 	200 	{string} 	refreshToken "Новый refresh token"
 //		@Failure	400		{object}	usecase.ErrorResponse

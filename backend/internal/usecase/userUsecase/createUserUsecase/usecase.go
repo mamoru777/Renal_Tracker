@@ -33,8 +33,8 @@ func New(createUser createUser, findUserByEmail findUserByEmail) *UseCase {
 //		@Tags		users
 //	 	@Accept 	json
 //		@Produce	json
-//		@Param		params	body		usecase.Json{data=registrationPkg.RegistrationV0Request}	true	"request"
-//		@Success	200		{object}	usecase.Json{data=registrationPkg.RegistrationV0Response}
+//		@Param		params	body		registrationPkg.RegistrationV0Request	true	"request"
+//		@Success	200		{object}	registrationPkg.RegistrationV0Response
 //		@Failure	400		{object}	usecase.ErrorResponse
 //		@Failure	500		{object}	usecase.ErrorResponse
 //		@Router		/api/user/reg [post]

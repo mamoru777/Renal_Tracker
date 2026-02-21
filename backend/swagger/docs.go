@@ -34,19 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/authPkg.AuthV0Request"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/authPkg.AuthV0Request"
                         }
                     }
                 ],
@@ -54,19 +42,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/authPkg.AuthV0Response"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/authPkg.AuthV0Response"
                         }
                     },
                     "400": {
@@ -123,19 +99,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Request"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Request"
                         }
                     }
                 ],
@@ -143,19 +107,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Response"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Response"
                         },
                         "headers": {
                             "accessToken": {
@@ -238,19 +190,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Request"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Request"
                         }
                     }
                 ],
@@ -258,19 +198,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Response"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/checkEmailPkg.CheckEmailV0Response"
                         }
                     },
                     "400": {
@@ -283,6 +211,86 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/me": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получение информации о пользователе",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getUserInfoPkg.GetUserInfoV0Response"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
                         }
                     }
                 }
@@ -307,19 +315,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/registrationPkg.RegistrationV0Request"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/registrationPkg.RegistrationV0Request"
                         }
                     }
                 ],
@@ -327,19 +323,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/registrationPkg.RegistrationV0Response"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/registrationPkg.RegistrationV0Response"
                         }
                     },
                     "400": {
@@ -390,19 +374,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Request"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Request"
                         }
                     }
                 ],
@@ -410,19 +382,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/usecase.Json"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Response"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Response"
                         },
                         "headers": {
                             "accessToken": {
@@ -521,6 +481,38 @@ const docTemplate = `{
             "properties": {
                 "isExists": {
                     "type": "boolean"
+                }
+            }
+        },
+        "getUserInfoPkg.GetUserInfoV0Response": {
+            "type": "object",
+            "properties": {
+                "dateBirth": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "patronymic": {
+                    "type": "string"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         },
@@ -637,9 +629,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "usecase.Json": {
-            "type": "object"
         }
     }
 }`

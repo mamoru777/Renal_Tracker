@@ -40,8 +40,8 @@ func New(findUserByEmail findUserByEmail, updateUserInfo updateUserInfo) *UseCas
 //		@Tags		users
 //	 	@Accept 	json
 //		@Produce	json
-//		@Param		params	body		usecase.Json{data=authPkg.AuthV0Request}	true	"request"
-//		@Success	200		{object}	usecase.Json{data=authPkg.AuthV0Response}
+//		@Param		params	body		authPkg.AuthV0Request	true	"request"
+//		@Success	200		{object}	authPkg.AuthV0Response
 //		@Failure	400		{object}	usecase.ErrorResponse
 //		@Failure	404		{object}	usecase.ErrorResponse
 //		@Failure	500		{object}	usecase.ErrorResponse

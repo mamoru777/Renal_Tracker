@@ -32,6 +32,27 @@ definitions:
       isExists:
         type: boolean
     type: object
+  getUserInfoPkg.GetUserInfoV0Response:
+    properties:
+      dateBirth:
+        type: string
+      email:
+        type: string
+      height:
+        type: number
+      id:
+        type: string
+      name:
+        type: string
+      patronymic:
+        type: string
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      surname:
+        type: string
+      weight:
+        type: number
+    type: object
   pkg.Sex:
     enum:
     - male
@@ -107,8 +128,6 @@ definitions:
       message:
         type: string
     type: object
-  usecase.Json:
-    type: object
 info:
   contact: {}
 paths:
@@ -122,24 +141,14 @@ paths:
         name: params
         required: true
         schema:
-          allOf:
-          - $ref: '#/definitions/usecase.Json'
-          - properties:
-              data:
-                $ref: '#/definitions/authPkg.AuthV0Request'
-            type: object
+          $ref: '#/definitions/authPkg.AuthV0Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/usecase.Json'
-            - properties:
-                data:
-                  $ref: '#/definitions/authPkg.AuthV0Response'
-              type: object
+            $ref: '#/definitions/authPkg.AuthV0Response'
         "400":
           description: Bad Request
           schema:
@@ -175,12 +184,7 @@ paths:
         name: params
         required: true
         schema:
-          allOf:
-          - $ref: '#/definitions/usecase.Json'
-          - properties:
-              data:
-                $ref: '#/definitions/changePasswordPkg.ChangePasswordV0Request'
-            type: object
+          $ref: '#/definitions/changePasswordPkg.ChangePasswordV0Request'
       produces:
       - application/json
       responses:
@@ -194,12 +198,7 @@ paths:
               description: Новый refresh token
               type: string
           schema:
-            allOf:
-            - $ref: '#/definitions/usecase.Json'
-            - properties:
-                data:
-                  $ref: '#/definitions/changePasswordPkg.ChangePasswordV0Response'
-              type: object
+            $ref: '#/definitions/changePasswordPkg.ChangePasswordV0Response'
         "400":
           description: Bad Request
           headers:
@@ -246,24 +245,14 @@ paths:
         name: params
         required: true
         schema:
-          allOf:
-          - $ref: '#/definitions/usecase.Json'
-          - properties:
-              data:
-                $ref: '#/definitions/checkEmailPkg.CheckEmailV0Request'
-            type: object
+          $ref: '#/definitions/checkEmailPkg.CheckEmailV0Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/usecase.Json'
-            - properties:
-                data:
-                  $ref: '#/definitions/checkEmailPkg.CheckEmailV0Response'
-              type: object
+            $ref: '#/definitions/checkEmailPkg.CheckEmailV0Response'
         "400":
           description: Bad Request
           schema:
@@ -273,6 +262,60 @@ paths:
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Проверка на существование пользователя с указанной почтой
+      tags:
+      - users
+  /api/user/me:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/getUserInfoPkg.GetUserInfoV0Response'
+        "404":
+          description: Not Found
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Получение информации о пользователе
       tags:
       - users
   /api/user/reg:
@@ -285,24 +328,14 @@ paths:
         name: params
         required: true
         schema:
-          allOf:
-          - $ref: '#/definitions/usecase.Json'
-          - properties:
-              data:
-                $ref: '#/definitions/registrationPkg.RegistrationV0Request'
-            type: object
+          $ref: '#/definitions/registrationPkg.RegistrationV0Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/usecase.Json'
-            - properties:
-                data:
-                  $ref: '#/definitions/registrationPkg.RegistrationV0Response'
-              type: object
+            $ref: '#/definitions/registrationPkg.RegistrationV0Response'
         "400":
           description: Bad Request
           schema:
@@ -334,12 +367,7 @@ paths:
         name: params
         required: true
         schema:
-          allOf:
-          - $ref: '#/definitions/usecase.Json'
-          - properties:
-              data:
-                $ref: '#/definitions/updateInfoPkg.UpdateUserInfoV0Request'
-            type: object
+          $ref: '#/definitions/updateInfoPkg.UpdateUserInfoV0Request'
       produces:
       - application/json
       responses:
@@ -353,12 +381,7 @@ paths:
               description: Новый refresh token
               type: string
           schema:
-            allOf:
-            - $ref: '#/definitions/usecase.Json'
-            - properties:
-                data:
-                  $ref: '#/definitions/updateInfoPkg.UpdateUserInfoV0Response'
-              type: object
+            $ref: '#/definitions/updateInfoPkg.UpdateUserInfoV0Response'
         "400":
           description: Bad Request
           headers:

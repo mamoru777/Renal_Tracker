@@ -29,8 +29,8 @@ func New(findUserByEmail findUserByEmail) *UseCase {
 //		@Tags		users
 //	 	@Accept 	json
 //		@Produce	json
-//		@Param		params	body		usecase.Json{data=checkEmailPkg.CheckEmailV0Request}	true	"request"
-//		@Success	200		{object}	usecase.Json{data=checkEmailPkg.CheckEmailV0Response}
+//		@Param		params	body		checkEmailPkg.CheckEmailV0Request	true	"request"
+//		@Success	200		{object}	checkEmailPkg.CheckEmailV0Response
 //		@Failure	400		{object}	usecase.ErrorResponse
 //		@Failure	500		{object}	usecase.ErrorResponse
 //		@Router		/api/user/checkEmail [post]

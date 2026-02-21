@@ -16,6 +16,7 @@ import (
 	"renal_tracker/internal/usecase/userUsecase/changePasswordUsecase"
 	"renal_tracker/internal/usecase/userUsecase/checkEmailUsecase"
 	"renal_tracker/internal/usecase/userUsecase/createUserUsecase"
+	"renal_tracker/internal/usecase/userUsecase/getUserInfoUsecase"
 	"renal_tracker/internal/usecase/userUsecase/updateUserInfoUsecase"
 	jwtManager "renal_tracker/tools/jwt"
 	"renal_tracker/tools/migrator"
@@ -53,6 +54,7 @@ type DI struct {
 		changePasswordUsecase *changePasswordUsecase.UseCase
 		checkEmailUsecase     *checkEmailUsecase.UseCase
 		updateUserInfoUsecase *updateUserInfoUsecase.UseCase
+		getUserInfoUsecase    *getUserInfoUsecase.UseCase
 	}
 
 	api *api.API
@@ -168,6 +170,7 @@ func (di *DI) initUsecases() {
 	di.useCases.changePasswordUsecase = changePasswordUsecase.New(di.repo.findUserByIDRepo, di.repo.changePasswordRepo)
 	di.useCases.checkEmailUsecase = checkEmailUsecase.New(di.repo.findUserByEmailRepo)
 	di.useCases.updateUserInfoUsecase = updateUserInfoUsecase.New(di.repo.updateUserInfoRepo, di.repo.findUserByIDRepo)
+	di.useCases.getUserInfoUsecase = getUserInfoUsecase.New(di.repo.findUserByIDRepo)
 }
 
 func (di *DI) initServer() {
@@ -186,6 +189,7 @@ func (di *DI) initAPI() {
 		di.useCases.changePasswordUsecase,
 		di.useCases.checkEmailUsecase,
 		di.useCases.updateUserInfoUsecase,
+		di.useCases.getUserInfoUsecase,
 	)
 
 	di.api.Route()
