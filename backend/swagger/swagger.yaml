@@ -87,6 +87,15 @@ definitions:
       id:
         type: string
     type: object
+  tokensRefreshPkg.TokensRefreshV0Request:
+    type: object
+  tokensRefreshPkg.TokensRefreshV0Response:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   updateInfoPkg.UpdateUserInfoV0Request:
     properties:
       dateBirth:
@@ -131,6 +140,40 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/tokens/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/tokensRefreshPkg.TokensRefreshV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tokensRefreshPkg.TokensRefreshV0Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Обновление пары токенов
+      tags:
+      - tokens
   /api/user/auth:
     post:
       consumes:
@@ -174,11 +217,6 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Refresh token cookie
-        in: header
-        name: Cookie
-        required: true
-        type: string
       - description: request
         in: body
         name: params
@@ -190,46 +228,18 @@ paths:
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/changePasswordPkg.ChangePasswordV0Response'
         "400":
           description: Bad Request
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "404":
           description: Not Found
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Смена пароля
@@ -274,45 +284,19 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Refresh token cookie
-        in: header
-        name: Cookie
-        required: true
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/getUserInfoPkg.GetUserInfoV0Response'
         "404":
           description: Not Found
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Получение информации о пользователе
@@ -357,11 +341,6 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Refresh token cookie
-        in: header
-        name: Cookie
-        required: true
-        type: string
       - description: request
         in: body
         name: params
@@ -373,35 +352,14 @@ paths:
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/updateInfoPkg.UpdateUserInfoV0Response'
         "400":
           description: Bad Request
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Обновление информации о пользователе
