@@ -1,0 +1,27 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: azure;
+}
+
+.header {
+  width: 100%;
+  padding: 8px 16px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  z-index: 1101;
+  justify-content: space-between;
+  background-color: rgba(var(--primary-color), 0.3);
+}
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  background-color: var(--primary-color);
+}
