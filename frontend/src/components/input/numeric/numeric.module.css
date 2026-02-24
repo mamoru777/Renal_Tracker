@@ -1,0 +1,11 @@
+.container {
+  padding: 15px 0;
+}
+
+.message {
+  margin-top: 8px;
+}
+
+.prefix {
+  font-size: 14px;
+}

@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  padding: 40px 15px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  width: 100%;
+}
+
+.form {
+  @media screen and (min-width: 769px) {
+    min-width: 560px;
+  }
+}
+
+.submit {
+  margin-top: 16px;
+}
+
+.section {
+  display: flex;
+  justify-content: center;
+}
