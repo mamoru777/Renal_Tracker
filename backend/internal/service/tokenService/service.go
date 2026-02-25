@@ -61,6 +61,14 @@ func AuthMiddleware() fiber.Handler {
 				return c.Status(fiber.StatusInternalServerError).
 					JSON(fiber.Map{"error": err.Error()})
 			}
+
+			refreshToken, err = jwtManager.GenerateToken(c.Context(), jwtManager.RefreshToken, claims)
+			if err != nil {
+				log.Error().Err(err).Msg("can not generate token")
+
+				return c.Status(fiber.StatusInternalServerError).
+					JSON(fiber.Map{"error": err.Error()})
+			}
 		}
 
 		c.Locals("userID", refreshClaims.UserID)
