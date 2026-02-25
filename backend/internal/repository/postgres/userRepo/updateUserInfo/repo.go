@@ -56,6 +56,6 @@ func (u *UpdateUserInfoRepo) UpdateUserInfo(ctx context.Context, user updateInfo
 	}
 
 	return u.db.Exec(ctx, sq.Update(userDDL.Table).
-		SetMap(mpUpdate).Where(userDDL.ColumnID, id),
+		SetMap(mpUpdate).Where(sq.Eq{userDDL.ColumnID: id}),
 	)
 }

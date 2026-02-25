@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS rental.user (
+CREATE TABLE IF NOT EXISTS renal.user (
     id VARCHAR NOT NULL,
     name VARCHAR NOT NULL,
     surname VARCHAR NOT NULL,
@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS rental.user (
     email VARCHAR NOT NULL UNIQUE,
     password_hash BYTEA NOT NULL,
     password_salt BYTEA NOT NULL,
-    birth TIMESTAMP NOT NULL,
-    sex rental."sex" NOT NULL,
+    birth DATE NOT NULL,
+    sex renal."sex" NOT NULL,
     weight decimal,
     height decimal,
     last_login_at TIMESTAMPTZ,
@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS rental.user (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS rental.user;
+DROP TABLE IF EXISTS renal.user;
 -- +goose StatementEnd

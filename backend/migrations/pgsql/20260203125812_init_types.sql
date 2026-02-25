@@ -3,7 +3,7 @@
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sex') THEN
-        CREATE TYPE ssp."sex" AS ENUM ('male', 'female');
+        CREATE TYPE renal."sex" AS ENUM ('male', 'female');
     END IF;
 END
 $$;
@@ -11,5 +11,5 @@ $$;
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TYPE rental."sex";
+DROP TYPE renal."sex";
 -- +goose StatementEnd

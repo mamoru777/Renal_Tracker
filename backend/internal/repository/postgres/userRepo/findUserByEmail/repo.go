@@ -22,7 +22,7 @@ func New(db sql.SQL) *FindUserByEmailRepo {
 func (f *FindUserByEmailRepo) FindUserByEmail(ctx context.Context, email string) (userModel.User, error) {
 	user := userModel.User{}
 
-	if err := f.db.Get(ctx, &user, sq.Select("*").From(userDDL.Table).Where(userDDL.ColumnEmail, email)); err != nil {
+	if err := f.db.Get(ctx, &user, sq.Select("*").From(userDDL.Table).Where(sq.Eq{userDDL.ColumnEmail: email})); err != nil {
 		return user, err
 	}
 

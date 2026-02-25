@@ -89,7 +89,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := passwordManager.CompareHashAndPassword(user.PasswordHash, []byte(req.OldPassword), user.PasswordSalt, []byte("")); err != nil {
+	if err := passwordManager.CompareHashAndPassword(user.PasswordHash, []byte(req.OldPassword), user.PasswordSalt, []byte(cfg.Load().Auth.GeneralSalt)); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": ErrInvalidEmailOrPassword,
 		})
