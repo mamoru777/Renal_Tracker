@@ -22,7 +22,7 @@ func New(db sql.SQL) *FindUserByIDRepo {
 func (f *FindUserByIDRepo) FindUserByID(ctx context.Context, id string) (userModel.User, error) {
 	user := userModel.User{}
 
-	if err := f.db.Get(ctx, &user, sq.Select("*").From(userDDL.Table).Where(userDDL.ColumnID, id)); err != nil {
+	if err := f.db.Get(ctx, &user, sq.Select("*").From(userDDL.Table).Where(sq.Eq{userDDL.ColumnID: id})); err != nil {
 		return user, err
 	}
 

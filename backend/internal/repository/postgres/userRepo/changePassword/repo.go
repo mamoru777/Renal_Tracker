@@ -23,6 +23,6 @@ func (c *ChangePasswordRepo) ChangePassword(ctx context.Context, id string, pass
 		SetMap(map[string]any{
 			userDDL.ColumnPasswordHash: passwordHash,
 			userDDL.ColumnPasswordSalt: passwordSalt,
-		}).Where(userDDL.ColumnID, id),
+		}).Where(sq.Eq{userDDL.ColumnID: id}),
 	)
 }
