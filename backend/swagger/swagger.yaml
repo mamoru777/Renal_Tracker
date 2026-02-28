@@ -5,6 +5,9 @@ definitions:
         type: string
       password:
         type: string
+    required:
+    - email
+    - password
     type: object
   authPkg.AuthV0Response:
     properties:
@@ -12,6 +15,141 @@ definitions:
         type: string
       refreshToken:
         type: string
+    required:
+    - accessToken
+    - refreshToken
+    type: object
+  calcPkg.CalcV0Request:
+    properties:
+      age:
+        type: integer
+      bsa:
+        type: number
+      creatinine:
+        type: number
+      creatinineCurrency:
+        $ref: '#/definitions/pkg.CreatinineCurrency'
+      creatinineTestDate:
+        type: string
+      height:
+        type: number
+      isAbsolute:
+        type: boolean
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      weight:
+        type: number
+    required:
+    - creatinine
+    - creatinineCurrency
+    - isAbsolute
+    type: object
+  calcPkg.CalcV0Response:
+    properties:
+      age:
+        type: integer
+      bsa:
+        type: number
+      creatinine:
+        type: number
+      creatinineCurrency:
+        $ref: '#/definitions/pkg.CreatinineCurrency'
+      creatinineTestDate:
+        type: string
+      gfr:
+        type: integer
+      gfrCurrency:
+        type: string
+      gfrMediumEnd:
+        type: integer
+      gfrMediumStart:
+        type: integer
+      gfrMinimum:
+        type: integer
+      height:
+        type: number
+      isAbsolute:
+        type: boolean
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      weight:
+        type: number
+    required:
+    - age
+    - bsa
+    - creatinine
+    - creatinineCurrency
+    - creatinineTestDate
+    - gfr
+    - gfrCurrency
+    - isAbsolute
+    - sex
+    type: object
+  calcPublicPkg.CalcPublicV0Request:
+    properties:
+      age:
+        type: integer
+      bsa:
+        type: number
+      creatinine:
+        type: number
+      creatinineCurrency:
+        $ref: '#/definitions/pkg.CreatinineCurrency'
+      height:
+        type: number
+      isAbsolute:
+        type: boolean
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      weight:
+        type: number
+    required:
+    - age
+    - creatinine
+    - creatinineCurrency
+    - isAbsolute
+    - sex
+    type: object
+  calcPublicPkg.CalcPublicV0Response:
+    properties:
+      age:
+        type: integer
+      bsa:
+        type: number
+      creatinine:
+        type: number
+      creatinineCurrency:
+        $ref: '#/definitions/pkg.CreatinineCurrency'
+      gfr:
+        type: integer
+      gfrCurrency:
+        type: string
+      gfrMediumEnd:
+        type: integer
+      gfrMediumStart:
+        type: integer
+      gfrMinimum:
+        type: integer
+      height:
+        type: number
+      isAbsolute:
+        type: boolean
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      weight:
+        type: number
+    required:
+    - age
+    - bsa
+    - creatinine
+    - creatinineCurrency
+    - gfr
+    - gfrCurrency
+    - gfrMediumEnd
+    - gfrMediumStart
+    - gfrMinimum
+    - isAbsolute
+    - sex
     type: object
   changePasswordPkg.ChangePasswordV0Request:
     properties:
@@ -19,6 +157,9 @@ definitions:
         type: string
       oldPassword:
         type: string
+    required:
+    - newPassword
+    - oldPassword
     type: object
   changePasswordPkg.ChangePasswordV0Response:
     type: object
@@ -26,11 +167,15 @@ definitions:
     properties:
       email:
         type: string
+    required:
+    - email
     type: object
   checkEmailPkg.CheckEmailV0Response:
     properties:
       isExists:
         type: boolean
+    required:
+    - isExists
     type: object
   getUserInfoPkg.GetUserInfoV0Response:
     properties:
@@ -52,7 +197,22 @@ definitions:
         type: string
       weight:
         type: number
+    required:
+    - dateBirth
+    - email
+    - id
+    - name
+    - sex
+    - surname
     type: object
+  pkg.CreatinineCurrency:
+    enum:
+    - mg/dl
+    - mkmol/l
+    type: string
+    x-enum-varnames:
+    - MG_DL
+    - MKMOL_L
   pkg.Sex:
     enum:
     - male
@@ -81,11 +241,61 @@ definitions:
         type: string
       weight:
         type: number
+    required:
+    - dateBirth
+    - email
+    - name
+    - password
+    - sex
+    - surname
     type: object
   registrationPkg.RegistrationV0Response:
     properties:
       id:
         type: string
+    required:
+    - id
+    type: object
+  saveResultPkg.SaveResultV0Request:
+    properties:
+      age:
+        type: integer
+      bsa:
+        type: number
+      creatinine:
+        type: number
+      creatinineCurrency:
+        $ref: '#/definitions/pkg.CreatinineCurrency'
+      creatinineTestDate:
+        type: string
+      gfr:
+        type: integer
+      gfrCurrency:
+        type: string
+      gfrMediumEnd:
+        type: integer
+      gfrMediumStart:
+        type: integer
+      gfrMinimum:
+        type: integer
+      height:
+        type: number
+      isAbsolute:
+        type: boolean
+      sex:
+        $ref: '#/definitions/pkg.Sex'
+      weight:
+        type: number
+    required:
+    - creatinineTestDate
+    - gfr
+    type: object
+  saveResultPkg.SaveResultV0Response:
+    properties:
+      id:
+        type: string
+    required:
+    - id
     type: object
   updateInfoPkg.UpdateUserInfoV0Request:
     properties:
@@ -122,6 +332,12 @@ definitions:
         type: string
       weight:
         type: number
+    required:
+    - dateBirth
+    - email
+    - name
+    - sex
+    - surname
     type: object
   usecase.ErrorResponse:
     properties:
@@ -131,6 +347,240 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/gfr/calc:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/calcPkg.CalcV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/calcPkg.CalcV0Response'
+        "400":
+          description: Bad Request
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "404":
+          description: Not Found
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Рассчитать СКФ для авторизованных пользователей
+      tags:
+      - gfr
+  /api/gfr/calcPublic:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/calcPublicPkg.CalcPublicV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/calcPublicPkg.CalcPublicV0Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Рассчитать СКФ для неавторизованных пользователей
+      tags:
+      - gfr
+  /api/gfr/getResults:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      - description: ID записей, если нужны конкретные, перечисляются в одном параметре
+          через запятую слитно
+        in: query
+        name: ids
+        type: string
+      - description: Сколько максимум записей нужно
+        in: query
+        name: limit
+        type: integer
+      - description: Смещение по записям
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/getUserInfoPkg.GetUserInfoV0Response'
+        "400":
+          description: Bad Request
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Получение результатов рассчета для пользователя
+      tags:
+      - gfr
+  /api/gfr/saveResult:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/saveResultPkg.SaveResultV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/saveResultPkg.SaveResultV0Response'
+        "400":
+          description: Bad Request
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "404":
+          description: Not Found
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          headers:
+            accessToken:
+              description: Новый access token
+              type: string
+            refreshToken:
+              description: Новый refresh token
+              type: string
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Сохранить результат рассчета (только для авторизованных)
+      tags:
+      - gfr
   /api/user/auth:
     post:
       consumes:

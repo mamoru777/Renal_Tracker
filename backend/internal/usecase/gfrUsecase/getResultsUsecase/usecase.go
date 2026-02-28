@@ -20,6 +20,25 @@ func New(getGfrResults getGfrResults) *UseCase {
 	return &UseCase{getGfrResults: getGfrResults}
 }
 
+//		@Summary	Получение результатов рассчета для пользователя
+//		@Tags		gfr
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param 		Authorization 	header 		string 		true 		"JWT access token" default "Bearer <token>"
+//		@Param 		Cookie 			header 		string 		true 		"Refresh token cookie" 		default 	"refreshToken=<token>"
+//		@Param		ids		query		string		false		"ID записей, если нужны конкретные, перечисляются в одном параметре через запятую слитно"
+//		@Param		limit		query		int		false		"Сколько максимум записей нужно"
+//		@Param		offset		query		int		false		"Смещение по записям"
+//		@Success	200		{object}	getUserInfoPkg.GetUserInfoV0Response
+//		@Header 	200 	{string} 	accessToken "Новый access token"
+//		@Header 	200 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Header 	400 	{string} 	accessToken "Новый access token"
+//		@Header 	400 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	500		{object}	usecase.ErrorResponse
+//		@Header 	500 	{string} 	accessToken "Новый access token"
+//		@Header 	500 	{string} 	refreshToken "Новый refresh token"
+//		@Router		/api/gfr/getResults [get]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "getResultsUsecase").Logger()
 

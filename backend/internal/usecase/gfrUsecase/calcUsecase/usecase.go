@@ -32,6 +32,26 @@ func New(findUserByID findUserByID) *UseCase {
 	}
 }
 
+//		@Summary	Рассчитать СКФ для авторизованных пользователей
+//		@Tags		gfr
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param 		Authorization 	header 		string 		true 		"JWT access token" default "Bearer <token>"
+//		@Param 		Cookie 			header 		string 		true 		"Refresh token cookie" 		default 	"refreshToken=<token>"
+//		@Param		params	body		calcPkg.CalcV0Request	true	"request"
+//		@Success	200		{object}	calcPkg.CalcV0Response
+//		@Header 	200 	{string} 	accessToken "Новый access token"
+//		@Header 	200 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Header 	400 	{string} 	accessToken "Новый access token"
+//		@Header 	400 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	404		{object}	usecase.ErrorResponse
+//		@Header 	404 	{string} 	accessToken "Новый access token"
+//		@Header 	404 	{string} 	refreshToken "Новый refresh token"
+//		@Failure	500		{object}	usecase.ErrorResponse
+//		@Header 	500 	{string} 	accessToken "Новый access token"
+//		@Header 	500 	{string} 	refreshToken "Новый refresh token"
+//		@Router		/api/gfr/calc [post]
 func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 	log := log.With().Str("layer", "calcUsecase").Logger()
 

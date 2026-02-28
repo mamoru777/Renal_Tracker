@@ -13,8 +13,8 @@ var (
 const ChangePasswordV0MethodPath = "/api/user/changePassword"
 
 type ChangePasswordV0Request struct {
-	OldPassword string `json:"oldPassword"`
-	NewPassword string `json:"newPassword"`
+	OldPassword string `json:"oldPassword" binding:"required"`
+	NewPassword string `json:"newPassword" binding:"required"`
 }
 
 type ChangePasswordV0Response struct{}

@@ -10,25 +10,25 @@ import (
 const SaveResultV0MethodPath = "/api/gfr/saveResult"
 
 type SaveResultV0Request struct {
-	Creatinine         *float32                `json:"creatinine"`
-	CreatinineCurrency *pkg.CreatinineCurrency `json:"creatinineCurrency"`
-	Weight             *float32                `json:"weight"`
-	Height             *float32                `json:"height"`
-	Sex                *pkg.Sex                `json:"sex"`
-	BSA                *float32                `json:"bsa"`
-	Age                *uint8                  `json:"age"`
-	GFR                uint8                   `json:"gfr"`
-	GFRCurrency        *pkg.GFRCurrency        `json:"gfrCurrency"`
-	IsAbsolute         *bool                   `json:"isAbsolute"`
-	CreatinineTestDate time.Time               `json:"creatinineTestDate"`
+	Creatinine         *float32                `json:"creatinine,omitempty"`
+	CreatinineCurrency *pkg.CreatinineCurrency `json:"creatinineCurrency,omitempty"`
+	Weight             *float32                `json:"weight,omitempty"`
+	Height             *float32                `json:"height,omitempty"`
+	Sex                *pkg.Sex                `json:"sex,omitempty"`
+	BSA                *float32                `json:"bsa,omitempty"`
+	Age                *uint8                  `json:"age,omitempty"`
+	GFR                uint8                   `json:"gfr" binding:"required"`
+	GFRCurrency        *pkg.GFRCurrency        `json:"gfrCurrency,omitempty"`
+	IsAbsolute         *bool                   `json:"isAbsolute,omitempty"`
+	CreatinineTestDate time.Time               `json:"creatinineTestDate" binding:"required"`
 
-	GFRMediumStart *uint8 `json:"gfrMediumStart"`
-	GFRMediumEnd   *uint8 `json:"gfrMediumEnd"`
-	GFRMinimum     *uint8 `json:"gfrMinimum"`
+	GFRMediumStart *uint8 `json:"gfrMediumStart,omitempty"`
+	GFRMediumEnd   *uint8 `json:"gfrMediumEnd,omitempty"`
+	GFRMinimum     *uint8 `json:"gfrMinimum,omitempty"`
 }
 
 type SaveResultV0Response struct {
-	ID string `json:"id"`
+	ID string `json:"id" binding:"required"`
 }
 
 func (s SaveResultV0Request) Validate() error {

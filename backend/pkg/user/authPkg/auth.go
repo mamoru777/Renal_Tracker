@@ -8,13 +8,13 @@ import (
 const AuthV0MethodPath = "/api/user/auth"
 
 type AuthV0Request struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type AuthV0Response struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken  string `json:"accessToken" binding:"required"`
+	RefreshToken string `json:"refreshToken" binding:"required"`
 }
 
 func (r AuthV0Request) Validate() error {

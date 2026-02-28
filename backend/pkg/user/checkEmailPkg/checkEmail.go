@@ -14,11 +14,11 @@ var (
 const CheckEmailV0MethodPath = "/api/user/checkEmail"
 
 type CheckEmailV0Request struct {
-	Email string `json:"email"`
+	Email string `json:"email" binding:"required"`
 }
 
 type CheckEmailV0Response struct {
-	IsExists bool `json:"isExists"`
+	IsExists bool `json:"isExists" binding:"required"`
 }
 
 func (r CheckEmailV0Request) Validate() error {

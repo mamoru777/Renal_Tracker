@@ -15,6 +15,353 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/gfr/calc": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gfr"
+                ],
+                "summary": "Рассчитать СКФ для авторизованных пользователей",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/calcPkg.CalcV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/calcPkg.CalcV0Response"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gfr/calcPublic": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gfr"
+                ],
+                "summary": "Рассчитать СКФ для неавторизованных пользователей",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/calcPublicPkg.CalcPublicV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/calcPublicPkg.CalcPublicV0Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gfr/getResults": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gfr"
+                ],
+                "summary": "Получение результатов рассчета для пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID записей, если нужны конкретные, перечисляются в одном параметре через запятую слитно",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Сколько максимум записей нужно",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Смещение по записям",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getUserInfoPkg.GetUserInfoV0Response"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gfr/saveResult": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gfr"
+                ],
+                "summary": "Сохранить результат рассчета (только для авторизованных)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/saveResultPkg.SaveResultV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/saveResultPkg.SaveResultV0Response"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        },
+                        "headers": {
+                            "accessToken": {
+                                "type": "string",
+                                "description": "Новый access token"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Новый refresh token"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/auth": {
             "post": {
                 "consumes": [
@@ -434,6 +781,10 @@ const docTemplate = `{
     "definitions": {
         "authPkg.AuthV0Request": {
             "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
@@ -445,6 +796,10 @@ const docTemplate = `{
         },
         "authPkg.AuthV0Response": {
             "type": "object",
+            "required": [
+                "accessToken",
+                "refreshToken"
+            ],
             "properties": {
                 "accessToken": {
                     "type": "string"
@@ -454,8 +809,200 @@ const docTemplate = `{
                 }
             }
         },
+        "calcPkg.CalcV0Request": {
+            "type": "object",
+            "required": [
+                "creatinine",
+                "creatinineCurrency",
+                "isAbsolute"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "bsa": {
+                    "type": "number"
+                },
+                "creatinine": {
+                    "type": "number"
+                },
+                "creatinineCurrency": {
+                    "$ref": "#/definitions/pkg.CreatinineCurrency"
+                },
+                "creatinineTestDate": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isAbsolute": {
+                    "type": "boolean"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "calcPkg.CalcV0Response": {
+            "type": "object",
+            "required": [
+                "age",
+                "bsa",
+                "creatinine",
+                "creatinineCurrency",
+                "creatinineTestDate",
+                "gfr",
+                "gfrCurrency",
+                "isAbsolute",
+                "sex"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "bsa": {
+                    "type": "number"
+                },
+                "creatinine": {
+                    "type": "number"
+                },
+                "creatinineCurrency": {
+                    "$ref": "#/definitions/pkg.CreatinineCurrency"
+                },
+                "creatinineTestDate": {
+                    "type": "string"
+                },
+                "gfr": {
+                    "type": "integer"
+                },
+                "gfrCurrency": {
+                    "type": "string"
+                },
+                "gfrMediumEnd": {
+                    "type": "integer"
+                },
+                "gfrMediumStart": {
+                    "type": "integer"
+                },
+                "gfrMinimum": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isAbsolute": {
+                    "type": "boolean"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "calcPublicPkg.CalcPublicV0Request": {
+            "type": "object",
+            "required": [
+                "age",
+                "creatinine",
+                "creatinineCurrency",
+                "isAbsolute",
+                "sex"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "bsa": {
+                    "type": "number"
+                },
+                "creatinine": {
+                    "type": "number"
+                },
+                "creatinineCurrency": {
+                    "$ref": "#/definitions/pkg.CreatinineCurrency"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isAbsolute": {
+                    "type": "boolean"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "calcPublicPkg.CalcPublicV0Response": {
+            "type": "object",
+            "required": [
+                "age",
+                "bsa",
+                "creatinine",
+                "creatinineCurrency",
+                "gfr",
+                "gfrCurrency",
+                "gfrMediumEnd",
+                "gfrMediumStart",
+                "gfrMinimum",
+                "isAbsolute",
+                "sex"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "bsa": {
+                    "type": "number"
+                },
+                "creatinine": {
+                    "type": "number"
+                },
+                "creatinineCurrency": {
+                    "$ref": "#/definitions/pkg.CreatinineCurrency"
+                },
+                "gfr": {
+                    "type": "integer"
+                },
+                "gfrCurrency": {
+                    "type": "string"
+                },
+                "gfrMediumEnd": {
+                    "type": "integer"
+                },
+                "gfrMediumStart": {
+                    "type": "integer"
+                },
+                "gfrMinimum": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isAbsolute": {
+                    "type": "boolean"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "changePasswordPkg.ChangePasswordV0Request": {
             "type": "object",
+            "required": [
+                "newPassword",
+                "oldPassword"
+            ],
             "properties": {
                 "newPassword": {
                     "type": "string"
@@ -470,6 +1017,9 @@ const docTemplate = `{
         },
         "checkEmailPkg.CheckEmailV0Request": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
@@ -478,6 +1028,9 @@ const docTemplate = `{
         },
         "checkEmailPkg.CheckEmailV0Response": {
             "type": "object",
+            "required": [
+                "isExists"
+            ],
             "properties": {
                 "isExists": {
                     "type": "boolean"
@@ -486,6 +1039,14 @@ const docTemplate = `{
         },
         "getUserInfoPkg.GetUserInfoV0Response": {
             "type": "object",
+            "required": [
+                "dateBirth",
+                "email",
+                "id",
+                "name",
+                "sex",
+                "surname"
+            ],
             "properties": {
                 "dateBirth": {
                     "type": "string"
@@ -516,6 +1077,17 @@ const docTemplate = `{
                 }
             }
         },
+        "pkg.CreatinineCurrency": {
+            "type": "string",
+            "enum": [
+                "mg/dl",
+                "mkmol/l"
+            ],
+            "x-enum-varnames": [
+                "MG_DL",
+                "MKMOL_L"
+            ]
+        },
         "pkg.Sex": {
             "type": "string",
             "enum": [
@@ -529,6 +1101,14 @@ const docTemplate = `{
         },
         "registrationPkg.RegistrationV0Request": {
             "type": "object",
+            "required": [
+                "dateBirth",
+                "email",
+                "name",
+                "password",
+                "sex",
+                "surname"
+            ],
             "properties": {
                 "dateBirth": {
                     "type": "string"
@@ -561,6 +1141,71 @@ const docTemplate = `{
         },
         "registrationPkg.RegistrationV0Response": {
             "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "saveResultPkg.SaveResultV0Request": {
+            "type": "object",
+            "required": [
+                "creatinineTestDate",
+                "gfr"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "bsa": {
+                    "type": "number"
+                },
+                "creatinine": {
+                    "type": "number"
+                },
+                "creatinineCurrency": {
+                    "$ref": "#/definitions/pkg.CreatinineCurrency"
+                },
+                "creatinineTestDate": {
+                    "type": "string"
+                },
+                "gfr": {
+                    "type": "integer"
+                },
+                "gfrCurrency": {
+                    "type": "string"
+                },
+                "gfrMediumEnd": {
+                    "type": "integer"
+                },
+                "gfrMediumStart": {
+                    "type": "integer"
+                },
+                "gfrMinimum": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isAbsolute": {
+                    "type": "boolean"
+                },
+                "sex": {
+                    "$ref": "#/definitions/pkg.Sex"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "saveResultPkg.SaveResultV0Response": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -595,6 +1240,13 @@ const docTemplate = `{
         },
         "updateInfoPkg.UpdateUserInfoV0Response": {
             "type": "object",
+            "required": [
+                "dateBirth",
+                "email",
+                "name",
+                "sex",
+                "surname"
+            ],
             "properties": {
                 "dateBirth": {
                     "type": "string"

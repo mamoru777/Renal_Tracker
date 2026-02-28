@@ -16,6 +16,14 @@ func New() *UseCase {
 	return &UseCase{}
 }
 
+//		@Summary	Рассчитать СКФ для неавторизованных пользователей
+//		@Tags		gfr
+//	 	@Accept 	json
+//		@Produce	json
+//		@Param		params	body		calcPublicPkg.CalcPublicV0Request	true	"request"
+//		@Success	200		{object}	calcPublicPkg.CalcPublicV0Response
+//		@Failure	400		{object}	usecase.ErrorResponse
+//		@Router		/api/gfr/calcPublic [post]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	req := calcPublicPkg.CalcPublicV0Request{}
 

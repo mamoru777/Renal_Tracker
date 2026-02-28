@@ -14,25 +14,25 @@ type GetResultsV0Request struct {
 }
 
 type Result struct {
-	ID                 string                  `json:"id"`
+	ID                 string                  `json:"id" binding:"required"`
 	Creatinine         *float32                `json:"creatinine"`
 	CreatinineCurrency *pkg.CreatinineCurrency `json:"creatinineCurrency"`
 	Weight             *float32                `json:"weight"`
 	Height             *float32                `json:"height"`
-	Sex                pkg.Sex                 `json:"sex"`
+	Sex                pkg.Sex                 `json:"sex" binding:"required"`
 	BSA                *float32                `json:"bsa"`
-	Age                uint8                   `json:"age"`
-	GFR                uint8                   `json:"gfr"`
-	GFRCurrency        pkg.GFRCurrency         `json:"gfrCurrency"`
+	Age                uint8                   `json:"age" binding:"required"`
+	GFR                uint8                   `json:"gfr" binding:"required"`
+	GFRCurrency        pkg.GFRCurrency         `json:"gfrCurrency" binding:"required"`
 	IsAbsolute         *bool                   `json:"isAbsolute"`
-	CreatinineTestDate time.Time               `json:"creatinineTestDate"`
-	CreatedAt          time.Time               `json:"createdAt"`
+	CreatinineTestDate time.Time               `json:"creatinineTestDate" binding:"required"`
+	CreatedAt          time.Time               `json:"createdAt" binding:"required"`
 
-	GFRMediumStart uint8 `json:"gfrMediumStart"`
-	GFRMediumEnd   uint8 `json:"gfrMediumEnd"`
-	GFRMinimum     uint8 `json:"gfrMinimum"`
+	GFRMediumStart uint8 `json:"gfrMediumStart" binding:"required"`
+	GFRMediumEnd   uint8 `json:"gfrMediumEnd" binding:"required"`
+	GFRMinimum     uint8 `json:"gfrMinimum" binding:"required"`
 }
 
 type GetResultsV0Response struct {
-	Results []Result `json:"results"`
+	Results []Result `json:"results" binding:"required"`
 }
