@@ -4,6 +4,58 @@
         "contact": {}
     },
     "paths": {
+        "/api/tokens/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "Обновление пары токенов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tokensRefreshPkg.TokensRefreshV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tokensRefreshPkg.TokensRefreshV0Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/auth": {
             "post": {
                 "consumes": [
@@ -76,13 +128,6 @@
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "description": "request",
                         "name": "params",
                         "in": "body",
@@ -97,64 +142,24 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -224,13 +229,6 @@
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -238,48 +236,18 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/getUserInfoPkg.GetUserInfoV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -351,13 +319,6 @@
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "description": "request",
                         "name": "params",
                         "in": "body",
@@ -372,48 +333,18 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -552,6 +483,20 @@
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "tokensRefreshPkg.TokensRefreshV0Request": {
+            "type": "object"
+        },
+        "tokensRefreshPkg.TokensRefreshV0Response": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 }
             }

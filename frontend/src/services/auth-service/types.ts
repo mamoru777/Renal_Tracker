@@ -8,6 +8,11 @@ interface AuthPkgAuthV0Response {
   refreshToken?: string;
 }
 
+interface TokensRefreshV0Response {
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 interface ChangePasswordPkgChangePasswordV0Request {
   newPassword?: string;
   oldPassword?: string;
@@ -21,6 +26,8 @@ export type ErrorResponse = {
 
 export type AuthorizeRequestData = AuthPkgAuthV0Request;
 export type AuthorizeResponseData = AuthPkgAuthV0Response;
+
+export type RefreshTokensData = TokensRefreshV0Response;
 
 export type ChangePasswordRequestData =
   ChangePasswordPkgChangePasswordV0Request;

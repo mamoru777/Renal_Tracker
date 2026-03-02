@@ -12,6 +12,7 @@ import (
 	findUserByEmailRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByEmail"
 	findUserByIDRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByID"
 	updateUserInfoRepo "renal_tracker/internal/repository/postgres/userRepo/updateUserInfo"
+	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
 	"renal_tracker/internal/usecase/userUsecase/authUserUsecase"
 	"renal_tracker/internal/usecase/userUsecase/changePasswordUsecase"
 	"renal_tracker/internal/usecase/userUsecase/checkEmailUsecase"
@@ -55,6 +56,8 @@ type DI struct {
 		checkEmailUsecase     *checkEmailUsecase.UseCase
 		updateUserInfoUsecase *updateUserInfoUsecase.UseCase
 		getUserInfoUsecase    *getUserInfoUsecase.UseCase
+
+		tokensRefreshUsecase *tokensRefreshUsecase.UseCase
 	}
 
 	api *api.API
@@ -171,6 +174,7 @@ func (di *DI) initUsecases() {
 	di.useCases.checkEmailUsecase = checkEmailUsecase.New(di.repo.findUserByEmailRepo)
 	di.useCases.updateUserInfoUsecase = updateUserInfoUsecase.New(di.repo.updateUserInfoRepo, di.repo.findUserByIDRepo)
 	di.useCases.getUserInfoUsecase = getUserInfoUsecase.New(di.repo.findUserByIDRepo)
+	di.useCases.tokensRefreshUsecase = tokensRefreshUsecase.New()
 }
 
 func (di *DI) initServer() {
@@ -190,6 +194,7 @@ func (di *DI) initAPI() {
 		di.useCases.checkEmailUsecase,
 		di.useCases.updateUserInfoUsecase,
 		di.useCases.getUserInfoUsecase,
+		di.useCases.tokensRefreshUsecase,
 	)
 
 	di.api.Route()
