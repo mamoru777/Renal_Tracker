@@ -5,13 +5,7 @@ export function getUserIdFromToken(token?: string): string | undefined {
   if (!token) {
     return undefined;
   }
-
   const claims = getTokenClaims(token);
-
-  if (isTokenStale(token)) {
-    return undefined;
-  }
-
   return claims.CustomClaims.userID;
 }
 
@@ -25,6 +19,10 @@ export function isTokenStale(token: string): boolean {
   return getTokenClaims(token).exp < Date.now() / 1000;
 }
 
+export function getTokenExpirationTime(token: string): Date {
+  return new Date(getTokenClaims(token).exp * 1000);
+}
+
 interface DataWithResponseInit<D> {
   data: D;
   init: ResponseInit | null;
@@ -32,13 +30,16 @@ interface DataWithResponseInit<D> {
 
 export function resolvePageLoaderError<T = unknown>(
   e: T,
-): DataWithResponseInit<T> {
+): DataWithResponseInit<{ error: T }> {
   if (e instanceof ServerException) {
-    return data(e, { status: e.statusCode, statusText: e.message });
+    return data({ error: e }, { status: e.statusCode, statusText: e.message });
   }
 
-  return data(e, {
-    status: 500,
-    statusText: e instanceof Error ? e.message : 'Неизвестная ошибка',
-  });
+  return data(
+    { error: e },
+    {
+      status: 500,
+      statusText: e instanceof Error ? e.message : 'Неизвестная ошибка',
+    },
+  );
 }

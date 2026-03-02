@@ -68,6 +68,10 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
+	// TODO: Добавить Max-age или Expires
+	c.Cookie(&fiber.Cookie{Name: "refreshToken", Value: refreshToken, HTTPOnly: true, SameSite: "lax"})
+	c.Cookie(&fiber.Cookie{Name: "accessToken", Value: accessToken, HTTPOnly: true, SameSite: "lax"})
+
 	resp := tokensRefreshPkg.TokensRefreshV0Response{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

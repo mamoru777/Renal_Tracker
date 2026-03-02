@@ -4,4 +4,5 @@ export const appRoutes = Object.freeze({
   AUTH: '/auth',
   JOIN: '/join',
   ME: '/me',
+  LOGOUT: '/auth/logout',
 });

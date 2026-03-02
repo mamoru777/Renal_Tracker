@@ -4,35 +4,18 @@ import {
   redirect,
 } from 'react-router';
 import { appRoutes } from '@/constants/routes';
-import { CookieStorage } from '@/lib/storage';
-import { renalTrackerApi } from '@/services/api';
-import { isTokenStale } from '@/utils/helpers';
+import { userCtx } from '../auth-provider';
 
-function redirectToAuth() {
-  const search = new URLSearchParams('?');
-  search.set(
-    'redirect_uri',
-    encodeURIComponent(location.pathname + location.search),
-  );
-
-  throw redirect(`${appRoutes.AUTH}?${search.toString()}`);
-}
-
-export const authMiddleware: MiddlewareFunction = async (_, next) => {
-  const accessToken = new CookieStorage().get('accessToken');
-  const refreshToken = new CookieStorage().get('refreshToken');
-  const resolvedToken =
-    accessToken && refreshToken && !isTokenStale(refreshToken)
-      ? accessToken
-      : null;
-  renalTrackerApi.axiosInstance.defaults.headers.common.Authorization =
-    resolvedToken ? `Bearer ${resolvedToken}` : null;
-
-  if (!resolvedToken) {
-    redirectToAuth();
+export const authMiddleware: MiddlewareFunction = async (
+  { context, request },
+  next,
+) => {
+  if (!context.get(userCtx).userId) {
+    return redirectToAuth(request.url);
   }
 
   const response = await next();
+
   if (
     typeof response === 'object' &&
     Object.values<DataStrategyResult>({ ...response }).some(
@@ -46,8 +29,19 @@ export const authMiddleware: MiddlewareFunction = async (_, next) => {
         result?.init.status === 401,
     )
   ) {
-    redirectToAuth();
+    return redirectToAuth(request.url);
   }
 
   return response;
 };
+
+function redirectToAuth(url: string): never {
+  const urlObject = new URL(url);
+  const search = new URLSearchParams('?');
+  search.set(
+    'redirect_uri',
+    encodeURIComponent(urlObject.pathname + urlObject.search),
+  );
+
+  throw redirect(`${appRoutes.AUTH}?${search.toString()}`);
+}
