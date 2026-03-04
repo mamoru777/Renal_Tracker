@@ -1,20 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useActionData, useSubmit } from 'react-router';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { Link } from '@/components/link';
 import { appRoutes } from '@/constants/routes';
-import { defaultLogger } from '@/lib/logger';
+import { InvalidCredentialsException } from '@/lib/exception';
 import { toastProvider } from '@/modules/toast';
-import { useSetTokens } from '../auth-provider';
-import { submitLogin } from './actions';
 import type { LoginForm } from './types';
 import styles from './auth-form.module.css';
 
 export function AuthForm() {
-  const setTokens = useSetTokens();
-  const navigate = useNavigate();
+  const submit = useSubmit();
+  const actionData = useActionData();
 
   const { handleSubmit, control } = useForm<LoginForm>({
     defaultValues: {
@@ -23,26 +21,25 @@ export function AuthForm() {
     },
   });
 
+  useEffect(() => {
+    if (actionData?.error) {
+      const text =
+        actionData.error instanceof InvalidCredentialsException
+          ? 'Неверный логин или пароль'
+          : 'Ошибка при попытке авторизоваться';
+
+      toastProvider.error({ text });
+    }
+  }, [actionData]);
+
   const handleAuth = useCallback(
     async (formData: LoginForm) => {
-      try {
-        const { accessToken, refreshToken } = await submitLogin(formData);
-        setTokens(accessToken, refreshToken);
-
-        const redirectUri = new URLSearchParams(window.location.search).get(
-          'redirect_uri',
-        );
-
-        navigate(redirectUri ? decodeURIComponent(redirectUri) : appRoutes.ME, {
-          replace: true,
-          state: { email: null },
-        });
-      } catch (e: unknown) {
-        defaultLogger.error(e instanceof Error ? e?.message : 'Unknown error');
-        toastProvider.error({ text: 'Ошибка при попытке авторизоваться' });
-      }
+      await submit(JSON.stringify(formData), {
+        method: 'post',
+        encType: 'application/json',
+      });
     },
-    [setTokens, navigate],
+    [submit],
   );
 
   return (

@@ -1,6 +1,10 @@
 package cfg
 
-import "renal_tracker/tools/env"
+import (
+	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
+	"renal_tracker/internal/usecase/userUsecase/authUserUsecase"
+	"renal_tracker/tools/env"
+)
 
 type Config struct {
 	Port string `env:"SERVER_PORT"`
@@ -18,6 +22,10 @@ type Config struct {
 		AccessTokenTTL  string `env:"ACCESS_TOKEN_TTL"`
 		RefreshTokenTTL string `env:"REFRESH_TOKEN_TTL"`
 	}
+
+	AuthUseCaseConfig authUserUsecase.Config
+
+	TokensRefreshUsecaseConfig tokensRefreshUsecase.Config
 }
 
 func Load() Config {

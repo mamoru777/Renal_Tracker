@@ -2,8 +2,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PrimeReactProvider } from 'primereact/api';
 import { createBrowserRouter, RouterProvider } from 'react-router';
+import { Spinner } from '@/components/spinner';
 import { appRoutes } from '@/constants/routes';
-import { authMiddleware, AuthProvider, SecuredRoute } from '@/modules/auth';
+import {
+  authMiddleware,
+  AuthProvider,
+  createAuthAction,
+  createAuthProviderLoader,
+  createLogoutAction,
+  createTokensMiddleware,
+  SecuredRoute,
+} from '@/modules/auth';
 import { ErrorBoundary as DefaultErrorBoundary } from '@/modules/error-boundary';
 import { GlobalSpinner } from '@/modules/global-spinner';
 import { PageLayout } from '@/modules/page-layout';
@@ -30,20 +39,25 @@ const queryClient = new QueryClient({
 const routes = createBrowserRouter([
   {
     Component: AuthProvider,
+    loader: createAuthProviderLoader(queryClient),
+    middleware: [createTokensMiddleware(queryClient)],
     ErrorBoundary: DefaultErrorBoundary,
+    hydrateFallbackElement: <Spinner fullScreen active />,
     children: [
-      {
-        Component: Auth,
-        path: appRoutes.AUTH,
-      },
-      {
-        Component: Join,
-        path: appRoutes.JOIN,
-      },
       {
         Component: PageLayout,
         ErrorBoundary: DefaultErrorBoundary,
+        hydrateFallbackElement: <Spinner fullScreen active />,
         children: [
+          {
+            Component: Auth,
+            action: createAuthAction(queryClient),
+            path: appRoutes.AUTH,
+          },
+          {
+            Component: Join,
+            path: appRoutes.JOIN,
+          },
           {
             path: appRoutes.HOME,
             index: true,
@@ -57,6 +71,10 @@ const routes = createBrowserRouter([
             Component: SecuredRoute,
             middleware: [authMiddleware],
             children: [
+              {
+                path: appRoutes.LOGOUT,
+                action: createLogoutAction(queryClient),
+              },
               {
                 Component: Me,
                 loader: createMeLoadPageData(queryClient),

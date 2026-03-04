@@ -1,10 +1,12 @@
 package tokenService
 
 import (
+	"errors"
 	"renal_tracker/internal/model/userModel"
 	jwtManager "renal_tracker/tools/jwt"
 	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
@@ -18,62 +20,46 @@ func AuthMiddleware() fiber.Handler {
 		var accessToken string
 		var accessClaims userModel.CustomClaims
 
-		if authHeader != "" {
-			split := strings.Split(authHeader, " ")
-			if len(split) != 2 || split[0] != "Bearer" {
-				return c.Status(fiber.StatusUnauthorized).
-					JSON(fiber.Map{"error": "invalid authorization format"})
-			}
-
-			accessToken = split[1]
-
-			accessClaims, _ = jwtManager.ParseToken[userModel.CustomClaims](c.Context(), accessToken)
-		}
-
-		refreshToken := c.Cookies("refreshToken")
-		if refreshToken == "" {
+		if authHeader == "" {
 			return c.Status(fiber.StatusUnauthorized).
-				JSON(fiber.Map{"error": "refresh token is empty"})
+				JSON(fiber.Map{"error": "empty auth header"})
 		}
 
-		refreshClaims, err := jwtManager.ParseToken[userModel.CustomClaims](c.Context(), refreshToken)
-		if err != nil {
+		split := strings.Split(authHeader, " ")
+		if len(split) != 2 || split[0] != "Bearer" {
 			return c.Status(fiber.StatusUnauthorized).
-				JSON(fiber.Map{"error": "refresh token is expired"})
+				JSON(fiber.Map{"error": "invalid auth header format"})
 		}
 
-		if accessClaims.UserID != "" {
-			if accessClaims.UserID != refreshClaims.UserID {
-				return c.Status(fiber.StatusUnauthorized).
-					JSON(fiber.Map{"error": "userIDs in tokens are different"})
-			}
-		}
+		accessToken = split[1]
 
 		if accessToken == "" {
-			claims := userModel.CustomClaims{
-				UserID: refreshClaims.UserID,
-			}
-
-			accessToken, err = jwtManager.GenerateToken(c.Context(), jwtManager.AccessToken, claims)
-			if err != nil {
-				log.Error().Err(err).Msg("can not generate token")
-
-				return c.Status(fiber.StatusInternalServerError).
-					JSON(fiber.Map{"error": err.Error()})
-			}
-
-			refreshToken, err = jwtManager.GenerateToken(c.Context(), jwtManager.RefreshToken, claims)
-			if err != nil {
-				log.Error().Err(err).Msg("can not generate token")
-
-				return c.Status(fiber.StatusInternalServerError).
-					JSON(fiber.Map{"error": err.Error()})
-			}
+			return c.Status(fiber.StatusUnauthorized).
+				JSON(fiber.Map{"error": "empty access token"})
 		}
 
-		c.Locals("userID", refreshClaims.UserID)
-		c.Locals("accessToken", accessToken)
-		c.Locals("refreshToken", refreshToken)
+		accessClaims, err := jwtManager.ParseToken[userModel.CustomClaims](c.Context(), accessToken)
+		if err != nil {
+			var validationError *jwt.ValidationError
+
+			if errors.As(err, &validationError) {
+				if validationError.Errors == jwt.ValidationErrorExpired {
+					return c.Status(fiber.StatusUnauthorized).
+						JSON(fiber.Map{"error": "access token is expired"})
+				}
+			}
+			log.Error().Err(err).Msg("can not parse access token")
+
+			return c.Status(fiber.StatusInternalServerError).
+				JSON(fiber.Map{"error": "can not parse access token"})
+		}
+
+		if accessClaims.UserID == "" {
+			return c.Status(fiber.StatusUnauthorized).
+				JSON(fiber.Map{"error": "user id is empty"})
+		}
+
+		c.Locals("userID", accessClaims.UserID)
 
 		return c.Next()
 	}

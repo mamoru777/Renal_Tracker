@@ -1,7 +1,9 @@
-export interface User {
-  isAuthorized?: boolean;
-  id?: string;
-  email?: string;
+import type { User } from './user';
+
+export interface AuthorizedUser extends User {
+  isAuthorized: true;
+  id: string;
+  email: string;
   name?: string;
   surname?: string;
   patronymic?: string;

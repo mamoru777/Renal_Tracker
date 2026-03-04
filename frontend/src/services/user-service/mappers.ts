@@ -1,4 +1,4 @@
-import type { User } from '@/models/user';
+import type { AuthorizedUser, User } from '@/models';
 import type {
   GetUserProfileResponseData,
   RegisterRequestData,
@@ -7,7 +7,7 @@ import type {
 
 export function mapUserProfileResponseToUser(
   userResponse: GetUserProfileResponseData,
-): User {
+): AuthorizedUser {
   const {
     email,
     dateBirth,
@@ -21,6 +21,7 @@ export function mapUserProfileResponseToUser(
   } = userResponse;
 
   return {
+    isAuthorized: true,
     id: id ?? '',
     birthdate: dateBirth,
     email: email ?? '',
@@ -62,7 +63,7 @@ export function mapUserToCreateUserRequest(
 }
 
 export function mapUserToUpdateUserRequest(
-  user: User,
+  user: AuthorizedUser,
 ): UpdateUserProfileRequestData {
   const { birthdate, name, patronymic, surname, sex, height, weight } = user;
 

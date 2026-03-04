@@ -1,7 +1,7 @@
-import type { User } from '@/models/user';
+import type { AuthorizedUser } from '@/models';
 import type { UserForm } from './types';
 
-export function mapFormToUser(form: UserForm): User {
+export function mapFormToUser(form: UserForm): AuthorizedUser {
   const {
     email,
     birthdate,
@@ -15,6 +15,7 @@ export function mapFormToUser(form: UserForm): User {
   } = form;
 
   return {
+    isAuthorized: true,
     birthdate:
       birthdate &&
       new Date(
@@ -39,7 +40,7 @@ export function mapFormToUser(form: UserForm): User {
   };
 }
 
-export function mapUserToForm(user: User): UserForm {
+export function mapUserToForm(user: AuthorizedUser): UserForm {
   const {
     birthdate,
     email,

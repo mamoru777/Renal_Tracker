@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { type ActionFunction, data } from 'react-router';
-import type { User } from '@/models/user';
+import type { AuthorizedUser } from '@/models';
 import { globalSpinnerProvider } from '@/modules/global-spinner';
 import { createEagerLoadAuthenticatedUserData, saveUser } from '@/modules/user';
 import { resolvePageLoaderError } from '@/utils/helpers';
@@ -34,7 +34,7 @@ function isUserEditForm(
   );
 }
 
-async function submitUserEdit(queryClient: QueryClient, user: User) {
+async function submitUserEdit(queryClient: QueryClient, user: AuthorizedUser) {
   const stopSpinner = globalSpinnerProvider.startSpinner(Date.now().toString());
   try {
     const newUser = await saveUser(queryClient, user);
