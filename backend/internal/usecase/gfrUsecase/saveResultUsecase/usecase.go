@@ -52,12 +52,6 @@ func New(findUserByID findUserByID, createGfrResult createGfrResult) *UseCase {
 func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 	log := log.With().Str("layer", "saveResultUsecase").Logger()
 
-	accessToken := c.Locals("accessToken").(string)
-	refreshToken := c.Locals("refreshToken").(string)
-
-	c.Set("accessToken", accessToken)
-	c.Set("refreshToken", refreshToken)
-
 	userID := c.Locals("userID").(string)
 
 	req := saveResultPkg.SaveResultV0Request{}

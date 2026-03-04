@@ -55,12 +55,6 @@ func New(findUserByID findUserByID) *UseCase {
 func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 	log := log.With().Str("layer", "calcUsecase").Logger()
 
-	accessToken := c.Locals("accessToken").(string)
-	refreshToken := c.Locals("refreshToken").(string)
-
-	c.Set("accessToken", accessToken)
-	c.Set("refreshToken", refreshToken)
-
 	userID := c.Locals("userID").(string)
 
 	req := calcPkg.CalcV0Request{}
