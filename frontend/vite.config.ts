@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
     },
     css: {
       modules: {
-        generateScopedName: '[name].[hash:8]',
+        generateScopedName: '[name]-[local].[hash:8]',
         localsConvention: 'camelCase',
       },
     },

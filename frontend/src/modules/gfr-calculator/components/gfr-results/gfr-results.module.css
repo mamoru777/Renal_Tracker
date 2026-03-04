@@ -1,0 +1,40 @@
+.results {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-align: start;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.text {
+  font-size: 1.5rem;
+  width: fit-content;
+  display: inline-block;
+  min-width: 100%;
+}
+
+.value {
+  font-size: 1.2em;
+}
+
+.value.success {
+  color: green;
+}
+
+.value.fail {
+  color: red;
+}
+
+.save-button {
+  margin-top: 12px;
+}
+
+.skeleton {
+  margin-bottom: 12px;
+}

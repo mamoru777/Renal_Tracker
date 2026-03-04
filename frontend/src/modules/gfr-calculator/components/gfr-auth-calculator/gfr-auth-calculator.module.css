@@ -1,0 +1,27 @@
+.flexbox {
+  display: flex;
+  align-items: center;
+}
+
+.bsa-toggle {
+  margin-left: 24px;
+}
+
+.bsa-toggle:only-child {
+  margin: 23px 0;
+}
+
+.addon-group {
+  display: flex;
+  align-items: center;
+}
+
+.addon-group *:first-child input {
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+}
+
+.addon-group *:last-child input {
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+}

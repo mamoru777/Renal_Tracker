@@ -14,6 +14,11 @@ import {
   SecuredRoute,
 } from '@/modules/auth';
 import { ErrorBoundary as DefaultErrorBoundary } from '@/modules/error-boundary';
+import {
+  createCalcGfrAuthorized,
+  createCalcGfrUnauthorized,
+  createSaveGfrResult,
+} from '@/modules/gfr-calculator';
 import { GlobalSpinner } from '@/modules/global-spinner';
 import { PageLayout } from '@/modules/page-layout';
 import { Toast } from '@/modules/toast';
@@ -44,6 +49,10 @@ const routes = createBrowserRouter([
     ErrorBoundary: DefaultErrorBoundary,
     hydrateFallbackElement: <Spinner fullScreen active />,
     children: [
+      {
+        action: createCalcGfrUnauthorized(),
+        path: appRoutes.CALC_GFR_UNAUTH,
+      },
       {
         Component: PageLayout,
         ErrorBoundary: DefaultErrorBoundary,
@@ -82,6 +91,14 @@ const routes = createBrowserRouter([
                 path: appRoutes.ME,
                 HydrateFallback: MeSkeleton,
               },
+              {
+                action: createCalcGfrAuthorized(),
+                path: appRoutes.CALC_GFR_AUTH,
+              },
+              {
+                action: createSaveGfrResult(),
+                path: appRoutes.GFR_SAVE,
+              },
             ],
           },
         ],
@@ -91,7 +108,6 @@ const routes = createBrowserRouter([
 ]);
 
 const primeConfig = {
-  inputStyle: 'filled',
   ripple: true,
 } as const;
 

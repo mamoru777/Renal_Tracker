@@ -8,6 +8,7 @@ import { defaultLogger } from '@/lib/logger';
 import { ChangePassword } from '@/modules/auth';
 import { toastProvider } from '@/modules/toast';
 import { useAuthenticatedUser } from '@/modules/user';
+import { validateNotLaterThanNow } from '@/utils/validators';
 import type { createPageActions } from './actions';
 import { USER_EDIT_FORM } from './constants';
 import { mapFormToUser, mapUserToForm } from './mappers';
@@ -167,6 +168,7 @@ export function Me() {
           )}
           rules={{
             required: true,
+            validate: validateNotLaterThanNow,
           }}
         />
         <Controller

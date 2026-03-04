@@ -5,4 +5,7 @@ export const appRoutes = Object.freeze({
   JOIN: '/join',
   ME: '/me',
   LOGOUT: '/auth/logout',
+  CALC_GFR_UNAUTH: '/calc/gfr',
+  CALC_GFR_AUTH: '/me/gfr/calc',
+  GFR_SAVE: '/me/gfr/save',
 });
