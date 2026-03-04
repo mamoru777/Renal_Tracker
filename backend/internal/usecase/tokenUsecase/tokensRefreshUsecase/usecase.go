@@ -6,17 +6,24 @@ import (
 	"renal_tracker/internal/model/userModel"
 	"renal_tracker/pkg/token/tokensRefreshPkg"
 	jwtManager "renal_tracker/tools/jwt"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
 
-type UseCase struct {
+type Config struct {
+	AccessTokenTTL  time.Duration
+	RefreshTokenTTL time.Duration
 }
 
-func New() *UseCase {
-	return &UseCase{}
+type UseCase struct {
+	config Config
+}
+
+func New(config Config) *UseCase {
+	return &UseCase{config: config}
 }
 
 //		@Summary	Обновление пары токенов
@@ -68,9 +75,8 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	// TODO: Добавить Max-age или Expires
-	c.Cookie(&fiber.Cookie{Name: "refreshToken", Value: refreshToken, HTTPOnly: true, SameSite: "lax"})
-	c.Cookie(&fiber.Cookie{Name: "accessToken", Value: accessToken, HTTPOnly: true, SameSite: "lax"})
+	c.Cookie(&fiber.Cookie{Name: "refreshToken", Value: refreshToken, HTTPOnly: true, SameSite: "lax", MaxAge: int(u.config.RefreshTokenTTL.Seconds())})
+	c.Cookie(&fiber.Cookie{Name: "accessToken", Value: accessToken, HTTPOnly: true, SameSite: "lax", MaxAge: int(u.config.AccessTokenTTL.Seconds())})
 
 	resp := tokensRefreshPkg.TokensRefreshV0Response{
 		AccessToken:  accessToken,

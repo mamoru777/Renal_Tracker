@@ -221,6 +221,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/user/logout": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Выход пользователя из системы",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/logoutPkg.LogoutV0MethodPathV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/logoutPkg.LogoutV0MethodPathV0Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/me": {
             "get": {
                 "consumes": [
@@ -446,6 +486,12 @@ const docTemplate = `{
                     "type": "number"
                 }
             }
+        },
+        "logoutPkg.LogoutV0MethodPathV0Request": {
+            "type": "object"
+        },
+        "logoutPkg.LogoutV0MethodPathV0Response": {
+            "type": "object"
         },
         "pkg.Sex": {
             "type": "string",

@@ -8,12 +8,14 @@ import (
 	"renal_tracker/internal/usecase/userUsecase/checkEmailUsecase"
 	"renal_tracker/internal/usecase/userUsecase/createUserUsecase"
 	"renal_tracker/internal/usecase/userUsecase/getUserInfoUsecase"
+	"renal_tracker/internal/usecase/userUsecase/logoutUsecase"
 	"renal_tracker/internal/usecase/userUsecase/updateUserInfoUsecase"
 	"renal_tracker/pkg/token/tokensRefreshPkg"
 	"renal_tracker/pkg/user/authPkg"
 	"renal_tracker/pkg/user/changePasswordPkg"
 	"renal_tracker/pkg/user/checkEmailPkg"
 	"renal_tracker/pkg/user/getUserInfoPkg"
+	"renal_tracker/pkg/user/logoutPkg"
 	"renal_tracker/pkg/user/registrationPkg"
 	"renal_tracker/pkg/user/updateInfoPkg"
 
@@ -32,6 +34,7 @@ type API struct {
 	checkEmailUsecase     *checkEmailUsecase.UseCase
 	updateUserInfoUsecase *updateUserInfoUsecase.UseCase
 	getUserInfoUsecase    *getUserInfoUsecase.UseCase
+	logoutUsecase         *logoutUsecase.UseCase
 	tokensRefreshUsecase  *tokensRefreshUsecase.UseCase
 }
 
@@ -43,6 +46,7 @@ func New(
 	checkEmailUsecase *checkEmailUsecase.UseCase,
 	updateUserInfoUsecase *updateUserInfoUsecase.UseCase,
 	getUserInfoUsecase *getUserInfoUsecase.UseCase,
+	logoutUsecase *logoutUsecase.UseCase,
 	tokensRefreshUsecase *tokensRefreshUsecase.UseCase,
 ) *API {
 	return &API{
@@ -53,6 +57,7 @@ func New(
 		checkEmailUsecase:     checkEmailUsecase,
 		updateUserInfoUsecase: updateUserInfoUsecase,
 		getUserInfoUsecase:    getUserInfoUsecase,
+		logoutUsecase:         logoutUsecase,
 		tokensRefreshUsecase:  tokensRefreshUsecase,
 	}
 }
@@ -81,4 +86,6 @@ func (a *API) Route() {
 	auth.Post(changePasswordPkg.ChangePasswordV0MethodPath, a.changePasswordUsecase.Execute)
 
 	auth.Get(getUserInfoPkg.GetUserInfoV0MethodPath, a.getUserInfoUsecase.Execute)
+
+	auth.Post(logoutPkg.LogoutV0MethodPath, a.logoutUsecase.Execute)
 }

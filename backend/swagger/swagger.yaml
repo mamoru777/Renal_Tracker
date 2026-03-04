@@ -53,6 +53,10 @@ definitions:
       weight:
         type: number
     type: object
+  logoutPkg.LogoutV0MethodPathV0Request:
+    type: object
+  logoutPkg.LogoutV0MethodPathV0Response:
+    type: object
   pkg.Sex:
     enum:
     - male
@@ -272,6 +276,32 @@ paths:
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Проверка на существование пользователя с указанной почтой
+      tags:
+      - users
+  /api/user/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/logoutPkg.LogoutV0MethodPathV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/logoutPkg.LogoutV0MethodPathV0Response'
+      summary: Выход пользователя из системы
       tags:
       - users
   /api/user/me:
