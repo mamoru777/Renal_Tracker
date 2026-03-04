@@ -6,11 +6,11 @@ import type { JoinForm } from './types';
 const userService = new UserService();
 
 export async function submitJoin(formData: JoinForm): Promise<void> {
-  return await saveUser(formData);
+  return await createUser(formData);
 }
 
-async function saveUser(formData: JoinForm): Promise<void> {
-  const { id } = await userService.register(mapFormToUser(formData));
+async function createUser(formData: JoinForm): Promise<void> {
+  const { id } = await userService.register({ data: mapFormToUser(formData) });
 
   if (!id) {
     throw new InvalidResponseException('No user id in response');

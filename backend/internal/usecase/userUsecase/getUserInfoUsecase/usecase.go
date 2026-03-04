@@ -24,25 +24,12 @@ func New(findUserByID findUserByID) *UseCase {
 //	 	@Accept 	json
 //		@Produce	json
 //		@Param 		Authorization 	header 		string 		true 		"JWT access token" default "Bearer <token>"
-//		@Param 		Cookie 			header 		string 		true 		"Refresh token cookie" 		default 	"refreshToken=<token>"
 //		@Success	200		{object}	getUserInfoPkg.GetUserInfoV0Response
-//		@Header 	200 	{string} 	accessToken "Новый access token"
-//		@Header 	200 	{string} 	refreshToken "Новый refresh token"
 //		@Failure	404		{object}	usecase.ErrorResponse
-//		@Header 	404 	{string} 	accessToken "Новый access token"
-//		@Header 	404 	{string} 	refreshToken "Новый refresh token"
 //		@Failure	500		{object}	usecase.ErrorResponse
-//		@Header 	500 	{string} 	accessToken "Новый access token"
-//		@Header 	500 	{string} 	refreshToken "Новый refresh token"
 //		@Router		/api/user/me [get]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "getUserInfoUsecase").Logger()
-
-	accessToken := c.Locals("accessToken").(string)
-	refreshToken := c.Locals("refreshToken").(string)
-
-	c.Set("accessToken", accessToken)
-	c.Set("refreshToken", refreshToken)
 
 	userID := c.Locals("userID").(string)
 

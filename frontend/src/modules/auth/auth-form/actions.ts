@@ -1,14 +1,38 @@
-import { type HttpApiResponse } from '@/lib/api';
+import type { QueryClient } from '@tanstack/react-query';
+import { type ActionFunction, replace } from 'react-router';
+import { QK_TOKEN } from '@/constants/query-keys';
+import { appRoutes } from '@/constants/routes';
 import { InvalidResponseException } from '@/lib/exception';
-import { renalTrackerApi } from '@/services/api';
-import { AuthService } from '@/services/auth-service';
+import { defaultLogger } from '@/lib/logger';
+import { renalTrackerAuthService } from '@/services/auth-service';
+import { resolvePageLoaderError } from '@/utils/helpers';
 import type { LoginForm } from './types';
 
-const authService = new AuthService();
+export function createAuthAction(queryClient: QueryClient): ActionFunction {
+  return async function authAction({ request }) {
+    try {
+      const { accessToken, refreshToken } = await submitLogin(
+        await request.json(),
+      );
+      queryClient.setQueryData([QK_TOKEN], {
+        accessToken,
+        refreshToken,
+      });
+      const redirectUri = new URLSearchParams(window.location.search).get(
+        'redirect_uri',
+      );
 
-export async function submitLogin(
-  data: LoginForm,
-): Promise<{ accessToken: string; refreshToken: string }> {
+      return replace(
+        redirectUri ? decodeURIComponent(redirectUri) : appRoutes.ME,
+      );
+    } catch (e: unknown) {
+      defaultLogger.error(e instanceof Error ? e?.message : 'Unknown error');
+      return resolvePageLoaderError(e);
+    }
+  };
+}
+
+async function submitLogin(data: LoginForm): Promise<Tokens> {
   const { accessToken, refreshToken } = await performEmailAuthorization(data);
 
   if (!accessToken || !refreshToken) {
@@ -18,25 +42,18 @@ export async function submitLogin(
   return { accessToken, refreshToken };
 }
 
-async function performEmailAuthorization(
-  data: LoginForm,
-): Promise<{ accessToken: string; refreshToken?: string }> {
-  const { accessToken, refreshToken } = await authService.authorize(
-    data,
-    setAuthHeader,
+async function performEmailAuthorization(data: LoginForm): Promise<Tokens> {
+  const { accessToken, refreshToken } = await renalTrackerAuthService.authorize(
+    { data },
   );
 
   if (!accessToken) {
     throw new InvalidResponseException('No access token in auth response');
   }
 
-  return { accessToken, refreshToken };
-}
+  if (!refreshToken) {
+    throw new InvalidResponseException('No refresh token in auth response');
+  }
 
-function setAuthHeader(
-  response: HttpApiResponse<{ accessToken?: string }>,
-): void {
-  const accessToken = response.data.accessToken;
-  renalTrackerApi.axiosInstance.defaults.headers.common.Authorization =
-    accessToken ? `Bearer ${accessToken}` : null;
+  return { accessToken, refreshToken };
 }

@@ -1,8 +1,6 @@
 import { type ReactNode, useCallback, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar';
 import { Link } from '@/components/link';
-import { QK_CURRENT_USER, QK_USER } from '@/constants/query-keys';
 import { LogoutButton } from '@/modules/auth';
 import { Header } from './components/header';
 import styles from './sidebar.module.css';
@@ -12,7 +10,6 @@ type Props = {
 };
 
 export function Sidebar({ renderToggle }: Props) {
-  const queryClient = useQueryClient();
   const [isVisible, setIsVisible] = useState(false);
 
   const onHide = useCallback(() => {
@@ -25,8 +22,7 @@ export function Sidebar({ renderToggle }: Props) {
 
   const onLogout = useCallback(() => {
     onHide();
-    queryClient.invalidateQueries({ queryKey: [QK_USER, QK_CURRENT_USER] });
-  }, [onHide, queryClient]);
+  }, [onHide]);
 
   return (
     <>

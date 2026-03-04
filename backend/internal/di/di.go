@@ -18,11 +18,13 @@ import (
 	"renal_tracker/internal/usecase/gfrUsecase/calcUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/getResultsUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/saveResultUsecase"
+	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
 	"renal_tracker/internal/usecase/userUsecase/authUserUsecase"
 	"renal_tracker/internal/usecase/userUsecase/changePasswordUsecase"
 	"renal_tracker/internal/usecase/userUsecase/checkEmailUsecase"
 	"renal_tracker/internal/usecase/userUsecase/createUserUsecase"
 	"renal_tracker/internal/usecase/userUsecase/getUserInfoUsecase"
+	"renal_tracker/internal/usecase/userUsecase/logoutUsecase"
 	"renal_tracker/internal/usecase/userUsecase/updateUserInfoUsecase"
 	jwtManager "renal_tracker/tools/jwt"
 	"renal_tracker/tools/migrator"
@@ -64,6 +66,9 @@ type DI struct {
 		checkEmailUsecase     *checkEmailUsecase.UseCase
 		updateUserInfoUsecase *updateUserInfoUsecase.UseCase
 		getUserInfoUsecase    *getUserInfoUsecase.UseCase
+		logoutUsecase         *logoutUsecase.UseCase
+
+		tokensRefreshUsecase *tokensRefreshUsecase.UseCase
 
 		calcUsecase       *calcUsecase.UseCase
 		calcPublicUsecase *calcPublicUsecase.UseCase
@@ -104,10 +109,29 @@ func (di *DI) Init(ctx context.Context) error {
 	return nil
 }
 
-func (di *DI) loadCfg() {
+func (di *DI) loadCfg() error {
 	log.Info().Msg("load cfg")
 
 	di.config = cfg.Load()
+
+	accessTokenTTL, err := time.ParseDuration(di.config.Auth.AccessTokenTTL)
+	if err != nil {
+		return err
+	}
+
+	refreshTokenTTL, err := time.ParseDuration(di.config.Auth.RefreshTokenTTL)
+	if err != nil {
+		return err
+	}
+
+	di.config.AuthUseCaseConfig.AccessTokenTTL = accessTokenTTL
+	di.config.AuthUseCaseConfig.RefreshTokenTTL = refreshTokenTTL
+	di.config.AuthUseCaseConfig.GeneralSalt = []byte(di.config.Auth.GeneralSalt)
+
+	di.config.TokensRefreshUsecaseConfig.AccessTokenTTL = accessTokenTTL
+	di.config.TokensRefreshUsecaseConfig.RefreshTokenTTL = refreshTokenTTL
+
+	return nil
 }
 
 func (di *DI) initInfra(ctx context.Context) (err error) {
@@ -183,11 +207,14 @@ func (di *DI) initUsecases() {
 	log.Info().Msg("init usecases")
 
 	di.useCases.createUserUseCase = createUserUsecase.New(di.repo.createUserRepo, di.repo.findUserByEmailRepo)
-	di.useCases.authUserUsecase = authUserUsecase.New(di.repo.findUserByEmailRepo, di.repo.updateUserInfoRepo)
+	di.useCases.authUserUsecase = authUserUsecase.New(di.config.AuthUseCaseConfig, di.repo.findUserByEmailRepo, di.repo.updateUserInfoRepo)
 	di.useCases.changePasswordUsecase = changePasswordUsecase.New(di.repo.findUserByIDRepo, di.repo.changePasswordRepo)
 	di.useCases.checkEmailUsecase = checkEmailUsecase.New(di.repo.findUserByEmailRepo)
 	di.useCases.updateUserInfoUsecase = updateUserInfoUsecase.New(di.repo.updateUserInfoRepo, di.repo.findUserByIDRepo)
 	di.useCases.getUserInfoUsecase = getUserInfoUsecase.New(di.repo.findUserByIDRepo)
+	di.useCases.logoutUsecase = logoutUsecase.New()
+
+	di.useCases.tokensRefreshUsecase = tokensRefreshUsecase.New(di.config.TokensRefreshUsecaseConfig)
 
 	di.useCases.calcUsecase = calcUsecase.New(di.repo.findUserByIDRepo)
 	di.useCases.calcPublicUsecase = calcPublicUsecase.New()
@@ -212,6 +239,9 @@ func (di *DI) initAPI() {
 		di.useCases.checkEmailUsecase,
 		di.useCases.updateUserInfoUsecase,
 		di.useCases.getUserInfoUsecase,
+		di.useCases.logoutUsecase,
+
+		di.useCases.tokensRefreshUsecase,
 		di.useCases.calcUsecase,
 		di.useCases.calcPublicUsecase,
 		di.useCases.saveResultUsecase,

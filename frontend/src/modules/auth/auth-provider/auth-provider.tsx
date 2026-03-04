@@ -1,57 +1,36 @@
-import { useEffect, useState } from 'react';
-import { isAxiosError } from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { Outlet } from 'react-router';
-import { useStore } from 'zustand';
-import { CookieStorage } from '@/lib/storage';
-import { renalTrackerApi } from '@/services/api';
-import { isTokenStale } from '@/utils/helpers';
-import { authStore } from './store';
-
-const cookieStorage = new CookieStorage();
+import { QK_TOKEN } from '@/constants/query-keys';
+import { InvalidCredentialsException } from '@/lib/exception';
+import { getTokenExpirationTime } from '@/utils/helpers';
+import { refreshTokens } from './actions';
 
 export function AuthProvider() {
-  const [isApiInitialized, setIsApiInitialized] = useState(false);
-  const { setTokens } = useStore(authStore);
+  useQuery({
+    queryKey: [QK_TOKEN],
+    queryFn: refreshTokens,
+    refetchInterval: (query) => {
+      const currentTokens = query.state.data;
+      if (currentTokens?.accessToken) {
+        return (
+          getTokenExpirationTime(currentTokens.accessToken).valueOf() -
+          Date.now() -
+          120 * 1000
+        );
+      }
 
-  useEffect(() => {
-    const cookieAccessToken = cookieStorage.get('accessToken');
-    const cookieRefreshToken = cookieStorage.get('refreshToken');
+      if (
+        query.state.status === 'error' &&
+        query.state.error instanceof InvalidCredentialsException
+      ) {
+        return false;
+      }
 
-    if (cookieRefreshToken && isTokenStale(cookieRefreshToken)) {
-      cookieStorage.remove('accessToken');
-      cookieStorage.remove('refreshToken');
-    } else if (cookieAccessToken && cookieRefreshToken) {
-      setTokens(cookieAccessToken, cookieRefreshToken);
-      renalTrackerApi.axiosInstance.defaults.headers.common.Authorization = `Bearer ${cookieAccessToken}`;
-    }
+      return query.state.fetchFailureCount > 2 ? false : 30 * 1000;
+    },
+    refetchIntervalInBackground: true,
+    retry: false,
+  });
 
-    renalTrackerApi.axiosInstance.interceptors.response.use(
-      (r) => {
-        const accessTokenFromHeaders = r?.headers?.['accesstoken'];
-        const refreshTokenFromHeaders = r?.headers?.['refreshtoken'];
-
-        if (accessTokenFromHeaders && refreshTokenFromHeaders) {
-          setTokens(accessTokenFromHeaders, refreshTokenFromHeaders);
-        }
-        return r;
-      },
-      (e) => {
-        if (isAxiosError(e)) {
-          const accessTokenFromHeaders = e?.response?.headers?.['accesstoken'];
-          const refreshTokenFromHeaders =
-            e?.response?.headers?.['refreshtoken'];
-
-          if (accessTokenFromHeaders && refreshTokenFromHeaders) {
-            setTokens(accessTokenFromHeaders, refreshTokenFromHeaders);
-          }
-        }
-        throw e;
-      },
-    );
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsApiInitialized(true);
-  }, [setTokens, setIsApiInitialized]);
-
-  return isApiInitialized ? <Outlet /> : null;
+  return <Outlet />;
 }

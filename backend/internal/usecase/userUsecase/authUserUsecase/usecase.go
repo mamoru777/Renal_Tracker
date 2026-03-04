@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"renal_tracker/cfg"
 	"renal_tracker/internal/model/userModel"
 	"renal_tracker/pkg/user/authPkg"
 	"renal_tracker/pkg/user/updateInfoPkg"
@@ -19,18 +18,30 @@ import (
 	_ "renal_tracker/internal/usecase"
 )
 
+type Config struct {
+	AccessTokenTTL  time.Duration
+	RefreshTokenTTL time.Duration
+	GeneralSalt     []byte
+}
+
 var (
 	ErrNoUser                 = errors.New("No such user with this email")
 	ErrInvalidEmailOrPassword = errors.New("Invalid email or password")
 )
 
 type UseCase struct {
+	config          Config
 	findUserByEmail findUserByEmail
 	updateUserInfo  updateUserInfo
 }
 
-func New(findUserByEmail findUserByEmail, updateUserInfo updateUserInfo) *UseCase {
+func New(
+	config Config,
+	findUserByEmail findUserByEmail,
+	updateUserInfo updateUserInfo,
+) *UseCase {
 	return &UseCase{
+		config:          config,
 		findUserByEmail: findUserByEmail,
 		updateUserInfo:  updateUserInfo,
 	}
@@ -85,7 +96,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := passwordManager.CompareHashAndPassword(user.PasswordHash, []byte(req.Password), user.PasswordSalt, []byte(cfg.Load().Auth.GeneralSalt)); err != nil {
+	if err := passwordManager.CompareHashAndPassword(user.PasswordHash, []byte(req.Password), user.PasswordSalt, u.config.GeneralSalt); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": ErrInvalidEmailOrPassword,
 		})
@@ -107,6 +118,9 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	c.Cookie(&fiber.Cookie{Name: "refreshToken", Value: refreshToken, HTTPOnly: true, SameSite: "lax", MaxAge: int(u.config.RefreshTokenTTL.Seconds())})
+	c.Cookie(&fiber.Cookie{Name: "accessToken", Value: accessToken, HTTPOnly: true, SameSite: "lax", MaxAge: int(u.config.AccessTokenTTL.Seconds())})
 
 	resp := authPkg.AuthV0Response{
 		AccessToken:  accessToken,

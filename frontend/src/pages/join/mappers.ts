@@ -1,4 +1,4 @@
-import type { User } from '@/models/user';
+import type { User } from '@/models';
 import type { JoinForm } from './types';
 
 export function mapFormToUser(form: JoinForm): Omit<User, 'id'> {

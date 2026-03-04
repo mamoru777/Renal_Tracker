@@ -135,7 +135,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "request",
-                        "name": "body",
+                        "name": "params",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -362,6 +362,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tokens/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "Обновление пары токенов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tokensRefreshPkg.TokensRefreshV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tokensRefreshPkg.TokensRefreshV0Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/auth": {
             "post": {
                 "consumes": [
@@ -434,13 +486,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "description": "request",
                         "name": "params",
                         "in": "body",
@@ -455,64 +500,24 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/changePasswordPkg.ChangePasswordV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -563,6 +568,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/user/logout": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Выход пользователя из системы",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/logoutPkg.LogoutV0MethodPathV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/logoutPkg.LogoutV0MethodPathV0Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/me": {
             "get": {
                 "consumes": [
@@ -582,13 +627,6 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -596,48 +634,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/getUserInfoPkg.GetUserInfoV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -709,13 +717,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Refresh token cookie",
-                        "name": "Cookie",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "description": "request",
                         "name": "params",
                         "in": "body",
@@ -730,48 +731,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/updateInfoPkg.UpdateUserInfoV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -1077,6 +1048,12 @@ const docTemplate = `{
                 }
             }
         },
+        "logoutPkg.LogoutV0MethodPathV0Request": {
+            "type": "object"
+        },
+        "logoutPkg.LogoutV0MethodPathV0Response": {
+            "type": "object"
+        },
         "pkg.CreatinineCurrency": {
             "type": "string",
             "enum": [
@@ -1208,6 +1185,20 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "tokensRefreshPkg.TokensRefreshV0Request": {
+            "type": "object"
+        },
+        "tokensRefreshPkg.TokensRefreshV0Response": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 }
             }

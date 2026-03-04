@@ -4,32 +4,40 @@ import axios, {
   isAxiosError,
 } from 'axios';
 import { InvalidCredentialsException, ServerException } from '../exception';
-import { type HttpApi } from './types';
+import { type HttpApi, type HttpApiRequest } from './types';
 
 type ApiParams<T = undefined> = {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: 'get' | 'post' | 'put' | 'delete';
   url: string;
   data?: T;
   params?: Record<string, unknown>;
+  headers?: Record<string, string | null>;
 };
 
 type ApiConstructorParams = {
   baseUrl?: string;
 };
 
+const defaultReqHandler = <T>(req: HttpApiRequest<T>) => req;
+const defaultErrHandler = (e: unknown) => {
+  throw e;
+};
+
 export class AxiosApi implements HttpApi {
-  private axios: AxiosInstance;
+  private _axios: AxiosInstance;
+
+  private _reqHandler: <T>(request: HttpApiRequest<T>) => HttpApiRequest<T> =
+    defaultReqHandler;
+  private _errHandler: <T>(
+    error: ServerException,
+    request: HttpApiRequest,
+  ) => Promise<T> = defaultErrHandler;
 
   constructor({ baseUrl }: ApiConstructorParams) {
-    this.axios = axios.create({
+    this._axios = axios.create({
       baseURL: baseUrl,
     });
-    this.axios.defaults.headers.common['Content-Type'] = 'application/json';
-  }
-
-  /** for interceptors */
-  public get axiosInstance() {
-    return this.axios;
+    this._axios.defaults.headers.common['Content-Type'] = 'application/json';
   }
 
   private async send<Rq, Rs>({
@@ -37,37 +45,51 @@ export class AxiosApi implements HttpApi {
     url,
     data,
     params,
+    headers,
   }: ApiParams<Rq>): Promise<AxiosResponse<Rs>> {
     try {
-      return await this.axios.request<Rs>({
+      const req = {
+        ...this._reqHandler({
+          url,
+          data,
+          params,
+          headers,
+        }),
         method,
-        url,
-        data,
-        params,
         withCredentials: true,
-      });
+      };
+
+      return await this._axios.request<Rs, AxiosResponse<Rs, Rq>, Rq>(req);
     } catch (e: unknown) {
-      if (isAxiosError<Rs>(e)) {
+      if (isAxiosError<Rs, Rq>(e)) {
         if (e.response) {
-          if (e.status === 401) {
-            throw new InvalidCredentialsException(e);
+          const serverError =
+            e.status === 401
+              ? new InvalidCredentialsException(e)
+              : new ServerException(
+                  {
+                    message:
+                      e.response.data &&
+                      typeof e.response.data === 'object' &&
+                      'message' in e.response.data &&
+                      typeof e.response.data.message === 'string' &&
+                      e.response.data.message
+                        ? e.response.data.message
+                        : e.message,
+
+                    statusCode: e.response.status,
+                  },
+                  e,
+                );
+
+          if (this._errHandler && e.config) {
+            return await this._errHandler(
+              serverError,
+              e.config as HttpApiRequest,
+            );
           }
 
-          throw new ServerException(
-            {
-              message:
-                e.response.data &&
-                typeof e.response.data === 'object' &&
-                'message' in e.response.data &&
-                typeof e.response.data.message === 'string' &&
-                e.response.data.message
-                  ? e.response.data.message
-                  : e.message,
-
-              statusCode: e.response.status,
-            },
-            e,
-          );
+          throw serverError;
         }
       }
 
@@ -82,7 +104,7 @@ export class AxiosApi implements HttpApi {
   ): Promise<AxiosResponse<Rs>> {
     return this.send<Rq, Rs>({
       ...request,
-      method: 'GET',
+      method: 'get',
     });
   }
 
@@ -91,7 +113,7 @@ export class AxiosApi implements HttpApi {
   ): Promise<AxiosResponse<Rs>> {
     return this.send<Rq, Rs>({
       ...request,
-      method: 'POST',
+      method: 'post',
     });
   }
 
@@ -100,7 +122,7 @@ export class AxiosApi implements HttpApi {
   ): Promise<AxiosResponse<Rs>> {
     return this.send<Rq, Rs>({
       ...request,
-      method: 'PUT',
+      method: 'put',
     });
   }
 
@@ -109,7 +131,21 @@ export class AxiosApi implements HttpApi {
   ): Promise<AxiosResponse<Rs>> {
     return this.send<Rq, Rs>({
       ...request,
-      method: 'DELETE',
+      method: 'delete',
     });
+  }
+
+  public onRequest(
+    handler: <T>(request: HttpApiRequest<T>) => HttpApiRequest<T>,
+  ): () => void {
+    this._reqHandler = handler;
+    return () => (this._reqHandler = defaultReqHandler);
+  }
+
+  public onError(
+    handler: <T>(error: ServerException, request: HttpApiRequest) => Promise<T>,
+  ): () => void {
+    this._errHandler = handler;
+    return () => (this._errHandler = defaultErrHandler);
   }
 }

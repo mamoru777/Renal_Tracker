@@ -1,6 +1,7 @@
 import { type HttpApi } from '@/lib/api';
-import type { User } from '@/models/user';
+import type { AuthorizedUser, User } from '@/models';
 import { renalTrackerApi } from '../api';
+import { type AuthService, renalTrackerAuthService } from '../auth-service';
 import {
   mapUserProfileResponseToUser,
   mapUserToCreateUserRequest,
@@ -15,42 +16,65 @@ import type {
 
 export class UserService {
   private _api: HttpApi = renalTrackerApi;
+  private authService: AuthService = renalTrackerAuthService;
 
   private get api() {
     return this._api;
   }
 
+  private get headers(): Record<string, string> {
+    return this.authService.tokens
+      ? { Authorization: `Bearer ${this.authService.tokens.accessToken}` }
+      : {};
+  }
+
   constructor() {}
 
-  public async register(user: Omit<User, 'id'>): Promise<RegisterResponseData> {
+  public async register({
+    data,
+    signal,
+  }: ServiceRequest<
+    Omit<User, 'id'>,
+    RegisterResponseData
+  >): Promise<RegisterResponseData> {
     const response = await this.api.post<
       RegisterRequestData,
       RegisterResponseData
     >({
       url: '/user/reg',
-      data: mapUserToCreateUserRequest(user),
+      data: mapUserToCreateUserRequest(data),
+      signal,
     });
 
     return response.data;
   }
 
-  public async getAuthenticatedUserInfo(): Promise<User> {
+  public async getAuthenticatedUserInfo({
+    signal,
+  }: ServiceRequest<undefined, AuthorizedUser>): Promise<AuthorizedUser> {
     const response = await this.api.get<
       RegisterRequestData,
       RegisterResponseData
     >({
       url: '/user/me',
+      headers: this.headers,
+      signal,
     });
     return mapUserProfileResponseToUser(response.data);
   }
 
-  public async updateAuthenticatedUserInfo(user: User): Promise<User> {
+  public async updateAuthenticatedUserInfo({
+    data,
+    signal,
+  }: ServiceRequest<AuthorizedUser, AuthorizedUser>): Promise<AuthorizedUser> {
     const response = await this.api.post<
       UpdateUserProfileRequestData,
       UpdateUserProfileResponseData
     >({
       url: '/user/updateInfo',
-      data: mapUserToUpdateUserRequest(user),
+      data: mapUserToUpdateUserRequest(data),
+      headers: this.headers,
+      signal,
     });
 
     return mapUserProfileResponseToUser(response.data);
