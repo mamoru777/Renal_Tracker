@@ -1,6 +1,10 @@
-import { PageSection } from '@/components/page-section';
-import styles from './analyzes.module.css';
+import { GfrChart, GfrTable } from './components';
 
 export function Analyzes() {
-  return <PageSection className={styles.className}>TBD</PageSection>;
+  return (
+    <>
+      <GfrTable />
+      <GfrChart />
+    </>
+  );
 }

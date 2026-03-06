@@ -38,3 +38,8 @@ h1 {
 input {
   line-height: 1.5;
 }
+
+/* fix lara-light-teal theme */
+.p-paginator-page.p-highlight {
+  background-color: #bcf4e6 !important;
+}

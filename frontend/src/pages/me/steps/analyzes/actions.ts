@@ -8,7 +8,7 @@ import { resolvePageLoaderError } from '@/utils/helpers';
 export function createLoadAuthenticatedUserGfrResultsData(
   queryClient: QueryClient,
 ) {
-  return async function loadAuthenticatedUserData(): Promise<void> {
+  return async function loadAuthenticatedUserGfrResults(): Promise<void> {
     try {
       await queryClient.ensureQueryData({
         queryKey: [QK_CURRENT_USER, QK_GFR_RESULTS_LIST],
@@ -21,7 +21,7 @@ export function createLoadAuthenticatedUserGfrResultsData(
   };
 }
 
-async function fetchAuthUserGfrResults({
+export async function fetchAuthUserGfrResults({
   signal,
 }: ActionCtx): Promise<GfrCalcParams[]> {
   try {
