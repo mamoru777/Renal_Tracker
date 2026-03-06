@@ -1,10 +1,14 @@
-import { InvalidRequestException } from '@/lib/exception';
+import {
+  InvalidRequestException,
+  InvalidResponseException,
+} from '@/lib/exception';
 import type { GfrCalcParams } from '@/models/gfr-params';
 import type {
   CalcAuthGfrRequestData,
   CalcAuthGfrResponseData,
   CalcUnauthGfrRequestData,
   CalcUnauthGfrResponseData,
+  GetGfrResponseData,
   SaveGfrRequestData,
 } from './types';
 
@@ -196,4 +200,46 @@ export function mapGfrParamsModelToSaveGfrRequest(
     gfrMediumStart,
     gfrMinimum,
   };
+}
+
+export function mapGfrResultsResponseToGfrParamsModelList(
+  response: GetGfrResponseData,
+): GfrCalcParams[] {
+  if (!Array.isArray(response.results)) {
+    throw new InvalidResponseException('Expected results to be an array');
+  }
+
+  return response.results.map(
+    ({
+      age,
+      bsa,
+      creatinine,
+      creatinineCurrency,
+      gfr,
+      gfrCurrency,
+      gfrMediumEnd,
+      gfrMediumStart,
+      gfrMinimum,
+      isAbsolute,
+      sex,
+      height,
+      weight,
+      creatinineTestDate,
+    }) => ({
+      creatinine,
+      creatinineCurrency,
+      age,
+      bsa,
+      gfr,
+      gfrCurrency,
+      gfrMediumEnd,
+      gfrMediumStart,
+      gfrMinimum,
+      height,
+      isAbsolute,
+      sex,
+      weight,
+      creatinineTestDate,
+    }),
+  );
 }

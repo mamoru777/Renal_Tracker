@@ -1,4 +1,5 @@
 import type { SEX_VALUES } from '@/components/input/sex';
+import type { AuthorizedUser } from '@/models';
 
 export type UserForm = {
   id: string;
@@ -11,3 +12,9 @@ export type UserForm = {
   weight?: number;
   height?: number;
 };
+
+export type FetcherData =
+  | {
+      user: AuthorizedUser;
+    }
+  | { error: Error };

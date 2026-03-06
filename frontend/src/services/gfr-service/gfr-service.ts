@@ -8,12 +8,15 @@ import {
   mapGfrParamsModelToCalcPublicRequest,
   mapGfrParamsModelToCalcRequest,
   mapGfrParamsModelToSaveGfrRequest,
+  mapGfrResultsResponseToGfrParamsModelList,
 } from './mappers';
 import type {
   CalcAuthGfrRequestData,
   CalcAuthGfrResponseData,
   CalcUnauthGfrRequestData,
   CalcUnauthGfrResponseData,
+  GetGfrRequestData,
+  GetGfrResponseData,
   SaveGfrRequestData,
   SaveGfrResponseData,
 } from './types';
@@ -85,5 +88,21 @@ export class GfrService {
     });
 
     return response.data;
+  }
+
+  public async getGfrResult({
+    data,
+    signal,
+  }: ServiceRequest<GetGfrRequestData, GetGfrResponseData>): Promise<
+    GfrCalcParams[]
+  > {
+    const response = await this.api.get<GetGfrRequestData, GetGfrResponseData>({
+      url: '/gfr/getResults',
+      data,
+      signal,
+      headers: this.headers,
+    });
+
+    return mapGfrResultsResponseToGfrParamsModelList(response.data);
   }
 }

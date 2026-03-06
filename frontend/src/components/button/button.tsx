@@ -11,6 +11,7 @@ type Props = {
   renderChildren?: () => ReactNode;
   label?: string;
   loading?: boolean;
+  disabled?: boolean;
 };
 
 export function Button({
@@ -23,6 +24,7 @@ export function Button({
   type,
   label,
   loading,
+  disabled,
 }: PropsWithChildren<Props>) {
   let resolvedChildren: ReactNode = children;
   let resolvedLabel = label;
@@ -42,6 +44,7 @@ export function Button({
       label={resolvedLabel}
       form={formId}
       loading={loading}
+      disabled={disabled}
     >
       {resolvedChildren}
     </PrimeButton>

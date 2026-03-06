@@ -82,6 +82,36 @@ interface SaveResultPkgSaveResultV0Response {
   id: string;
 }
 
+interface GetResultsV0Request {
+  query?: {
+    /** ID записей, если нужны конкретные, перечисляются в одном параметре через запятую слитно */
+    ids?: string;
+    /** Сколько максимум записей нужно */
+    limit?: number;
+    /** Смещение по записям */
+    offset?: number;
+  };
+}
+
+interface GetResultsV0Response {
+  results?: {
+    age: number;
+    bsa: number;
+    creatinine: number;
+    creatinineCurrency: PkgCreatinineCurrency;
+    creatinineTestDate: string;
+    gfr: number;
+    gfrCurrency: string;
+    gfrMediumEnd?: number;
+    gfrMediumStart?: number;
+    gfrMinimum?: number;
+    height?: number;
+    isAbsolute: boolean;
+    sex: PkgSex;
+    weight?: number;
+  }[];
+}
+
 export type CalcAuthGfrRequestData = CalcPkgCalcV0Request;
 export type CalcAuthGfrResponseData = CalcPkgCalcV0Response;
 
@@ -90,3 +120,6 @@ export type CalcUnauthGfrResponseData = CalcPublicPkgCalcPublicV0Response;
 
 export type SaveGfrRequestData = SaveResultPkgSaveResultV0Request;
 export type SaveGfrResponseData = SaveResultPkgSaveResultV0Response;
+
+export type GetGfrRequestData = GetResultsV0Request;
+export type GetGfrResponseData = GetResultsV0Response;

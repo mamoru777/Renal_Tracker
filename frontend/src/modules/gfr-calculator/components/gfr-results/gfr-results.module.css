@@ -1,7 +1,6 @@
 .results {
   display: flex;
   align-items: center;
-  overflow: hidden;
   text-align: start;
 }
 
@@ -10,13 +9,13 @@
   display: flex;
   flex-direction: column;
   align-items: baseline;
+  overflow: hidden;
 }
 
 .text {
   font-size: 1.5rem;
-  width: fit-content;
+  width: max-content;
   display: inline-block;
-  min-width: 100%;
 }
 
 .value {

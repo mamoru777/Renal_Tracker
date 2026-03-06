@@ -27,10 +27,14 @@ import { Auth } from '@/pages/auth';
 import { Join } from '@/pages/join';
 import { Main } from '@/pages/main';
 import {
-  createLoadPageData as createMeLoadPageData,
-  createPageActions as createMePageActions,
+  Analyzes,
+  createEditProfileAction,
+  createLoadAuthenticatedUserGfrResultsData,
+  createLoadProfilePageData,
   Me,
-  MeSkeleton,
+  meMiddleware,
+  Profile,
+  ProfileSkeleton,
 } from '@/pages/me';
 
 const queryClient = new QueryClient({
@@ -86,18 +90,31 @@ const routes = createBrowserRouter([
               },
               {
                 Component: Me,
-                loader: createMeLoadPageData(queryClient),
-                action: createMePageActions(queryClient),
                 path: appRoutes.ME,
-                HydrateFallback: MeSkeleton,
-              },
-              {
-                action: createCalcGfrAuthorized(),
-                path: appRoutes.CALC_GFR_AUTH,
-              },
-              {
-                action: createSaveGfrResult(),
-                path: appRoutes.GFR_SAVE,
+                middleware: [meMiddleware],
+                children: [
+                  {
+                    action: createEditProfileAction(queryClient),
+                    loader: createLoadProfilePageData(queryClient),
+                    path: appRoutes.ME_PROFILE,
+                    Component: Profile,
+                    HydrateFallback: ProfileSkeleton,
+                  },
+                  {
+                    loader:
+                      createLoadAuthenticatedUserGfrResultsData(queryClient),
+                    path: appRoutes.ME_ANALYZES,
+                    Component: Analyzes,
+                  },
+                  {
+                    action: createCalcGfrAuthorized(),
+                    path: appRoutes.CALC_GFR_AUTH,
+                  },
+                  {
+                    action: createSaveGfrResult(),
+                    path: appRoutes.GFR_SAVE,
+                  },
+                ],
               },
             ],
           },

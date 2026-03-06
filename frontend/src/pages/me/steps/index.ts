@@ -1,10 +1,10 @@
-export { Me } from './me';
 export {
   Analyzes,
-  createEditProfileAction,
   createLoadAuthenticatedUserGfrResultsData,
+} from './analyzes';
+export {
+  createEditProfileAction,
   createLoadProfilePageData,
   Profile,
   ProfileSkeleton,
-} from './steps';
-export { meMiddleware } from './middleware';
+} from './profile';

@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { Button } from '@/components/button';
+import { PRIME_ICONS } from '@/constants/icons';
 import { Sidebar } from '@/modules/sidebar';
 import styles from './page-layout.module.css';
 
@@ -11,7 +12,7 @@ export function PageLayout() {
           renderToggle={({ toggleSidebar }) => (
             <Button
               onClick={toggleSidebar}
-              icon="pi pi-bars"
+              icon={PRIME_ICONS.THREE_STRIPES}
               aria-label="sidebar"
             />
           )}

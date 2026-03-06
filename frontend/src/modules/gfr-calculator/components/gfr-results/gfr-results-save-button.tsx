@@ -58,6 +58,7 @@ export function GfrResultsSaveButton() {
       onClick={onSaveResultsClick}
       className={styles.saveButton}
       loading={resultsFetcher.state !== 'idle'}
+      disabled={gfrFetcher.state !== 'idle'}
     >
       Сохранить результаты
     </Button>

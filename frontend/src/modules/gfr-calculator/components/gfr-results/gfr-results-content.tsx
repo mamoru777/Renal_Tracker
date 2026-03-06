@@ -15,24 +15,20 @@ export function GfrResultsContent() {
   }
 
   if ('error' in fetcher.data) {
-    return <span className={styles.text}>{fetcher.data.error.message}</span>;
+    return fetcher.data.error.message;
   }
 
   const { gfr, gfrCurrency, gfrMediumEnd, gfrMediumStart } =
     fetcher.data.calcResult;
 
   if ([gfr, gfrMediumEnd, gfrMediumStart].some((v) => typeof v !== 'number')) {
-    return (
-      <span className={styles.text}>
-        Расчет выполнен некорректно, пожалуйста, повторите попытку
-      </span>
-    );
+    return 'Расчет выполнен некорректно, пожалуйста, повторите попытку';
   }
 
   const isInBounds = gfrMediumStart! <= gfr!;
 
   return (
-    <span className={styles.text}>
+    <>
       <b
         className={cn(styles.value, {
           [styles.success]: isInBounds,
@@ -47,6 +43,6 @@ export function GfrResultsContent() {
       <b>
         {gfrMediumStart} - {gfrMediumEnd} ({gfrCurrency})
       </b>
-    </span>
+    </>
   );
 }

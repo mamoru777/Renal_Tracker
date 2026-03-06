@@ -30,7 +30,7 @@ export function createLogoutAction(queryClient: QueryClient): ActionFunction {
       accessToken: undefined,
       refreshToken: undefined,
     });
-    renalTrackerAuthService.logout();
+    await renalTrackerAuthService.logout({});
     const redirectUri = new URLSearchParams(new URL(request.url).search).get(
       'redirect_uri',
     );
