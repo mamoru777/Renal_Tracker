@@ -26,9 +26,9 @@ export function createLogoutAction(queryClient: QueryClient): ActionFunction {
       accessToken: undefined,
       refreshToken: undefined,
     });
-    queryClient.setQueryData([QK_CURRENT_USER], {
-      accessToken: undefined,
-      refreshToken: undefined,
+    queryClient.invalidateQueries({
+      queryKey: [QK_CURRENT_USER],
+      refetchType: 'all',
     });
     await renalTrackerAuthService.logout({});
     const redirectUri = new URLSearchParams(new URL(request.url).search).get(

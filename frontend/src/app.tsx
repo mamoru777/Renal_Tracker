@@ -111,7 +111,7 @@ const routes = createBrowserRouter([
                     path: appRoutes.CALC_GFR_AUTH,
                   },
                   {
-                    action: createSaveGfrResult(),
+                    action: createSaveGfrResult(queryClient),
                     path: appRoutes.GFR_SAVE,
                   },
                 ],
