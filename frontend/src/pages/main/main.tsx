@@ -1,4 +1,6 @@
 import { PageSection } from '@/components/page-section';
+import { GfrCalculator } from '@/modules/gfr-calculator';
+import styles from './main.module.css';
 
 export function Main() {
   return (
@@ -14,6 +16,13 @@ export function Main() {
           repellendus accusamus, quasi consequatur cum dolor praesentium.
         </p>
       </PageSection>
+
+      <div className={styles.calculatorBg}>
+        <PageSection>
+          <GfrCalculator />
+        </PageSection>
+      </div>
+
       <PageSection>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus

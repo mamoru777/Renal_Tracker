@@ -4,6 +4,6 @@ export const SEX_VALUES = Object.freeze({
 });
 
 export const SEX_OPTIONS = [
-  { value: SEX_VALUES.MAN, icon: 'pi pi-mars', label: 'М' },
-  { value: SEX_VALUES.WOMAN, icon: 'pi pi-venus', label: 'Ж' },
+  { value: SEX_VALUES.MAN, label: 'М' },
+  { value: SEX_VALUES.WOMAN, label: 'Ж' },
 ];

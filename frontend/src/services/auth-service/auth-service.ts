@@ -81,6 +81,21 @@ export class AuthService {
     return response.data;
   }
 
+  public async logout({
+    onSuccess,
+    signal,
+  }: ServiceRequest<undefined, undefined>): Promise<{ ok: boolean }> {
+    const response = await this.api.post<undefined, undefined>({
+      url: '/user/logout',
+      signal,
+      headers: { Authorization: `Bearer ${this.tokens?.accessToken}` },
+    });
+
+    onSuccess?.(response);
+    this._tokens = { accessToken: undefined, refreshToken: undefined };
+    return { ok: true };
+  }
+
   public async refreshTokens({
     onSuccess,
     signal,
@@ -114,10 +129,6 @@ export class AuthService {
   /** Consider null as unitialized, otherwise tokens were once initialized */
   public get tokens(): Partial<Tokens> | null {
     return this._tokens;
-  }
-
-  public logout() {
-    this._tokens = { accessToken: undefined, refreshToken: undefined };
   }
 
   private async handleApiError<T>(e: ServerException, req: HttpApiRequest<T>) {

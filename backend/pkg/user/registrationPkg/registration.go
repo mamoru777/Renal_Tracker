@@ -11,19 +11,19 @@ import (
 const RegistrationV0MethodPath = "/api/user/reg"
 
 type RegistrationV0Request struct {
-	Email      string    `json:"email"`
-	Password   string    `json:"password"`
-	Name       string    `json:"name"`
-	Surname    string    `json:"surname"`
-	Patronymic *string   `json:"patronymic"`
-	DateBirth  time.Time `json:"dateBirth"`
-	Sex        pkg.Sex   `json:"sex"`
-	Weight     *float32  `json:"weight"`
-	Height     *float32  `json:"height"`
+	Email      string    `json:"email" binding:"required"`
+	Password   string    `json:"password" binding:"required"`
+	Name       string    `json:"name" binding:"required"`
+	Surname    string    `json:"surname" binding:"required"`
+	Patronymic *string   `json:"patronymic,omitempty"`
+	DateBirth  time.Time `json:"dateBirth" binding:"required"`
+	Sex        pkg.Sex   `json:"sex" binding:"required"`
+	Weight     *float32  `json:"weight,omitempty"`
+	Height     *float32  `json:"height,omitempty"`
 }
 
 type RegistrationV0Response struct {
-	ID string `json:"id"`
+	ID string `json:"id" binding:"required"`
 }
 
 func (r RegistrationV0Request) Validate() error {

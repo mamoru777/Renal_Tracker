@@ -7,11 +7,17 @@ import (
 	"os/signal"
 	"renal_tracker/cfg"
 	"renal_tracker/internal/api"
+	createGfrResultRepo "renal_tracker/internal/repository/postgres/gfrRepo/createGfrResult"
+	getGfrResultsRepo "renal_tracker/internal/repository/postgres/gfrRepo/getGfrResults"
 	changePasswordRepo "renal_tracker/internal/repository/postgres/userRepo/changePassword"
 	createUserRepo "renal_tracker/internal/repository/postgres/userRepo/createUser"
 	findUserByEmailRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByEmail"
 	findUserByIDRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByID"
 	updateUserInfoRepo "renal_tracker/internal/repository/postgres/userRepo/updateUserInfo"
+	"renal_tracker/internal/usecase/gfrUsecase/calcPublicUsecase"
+	"renal_tracker/internal/usecase/gfrUsecase/calcUsecase"
+	"renal_tracker/internal/usecase/gfrUsecase/getResultsUsecase"
+	"renal_tracker/internal/usecase/gfrUsecase/saveResultUsecase"
 	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
 	"renal_tracker/internal/usecase/userUsecase/authUserUsecase"
 	"renal_tracker/internal/usecase/userUsecase/changePasswordUsecase"
@@ -48,6 +54,9 @@ type DI struct {
 		findUserByEmailRepo *findUserByEmailRepo.FindUserByEmailRepo
 		findUserByIDRepo    *findUserByIDRepo.FindUserByIDRepo
 		updateUserInfoRepo  *updateUserInfoRepo.UpdateUserInfoRepo
+
+		createGfrResultRepo *createGfrResultRepo.CreateGfrResultRepo
+		getGfrResultsRepo   *getGfrResultsRepo.GetGfrResultsRepo
 	}
 
 	useCases struct {
@@ -60,6 +69,11 @@ type DI struct {
 		logoutUsecase         *logoutUsecase.UseCase
 
 		tokensRefreshUsecase *tokensRefreshUsecase.UseCase
+
+		calcUsecase       *calcUsecase.UseCase
+		calcPublicUsecase *calcPublicUsecase.UseCase
+		saveResultUsecase *saveResultUsecase.UseCase
+		getResultsUsecase *getResultsUsecase.UseCase
 	}
 
 	api *api.API
@@ -184,6 +198,9 @@ func (di *DI) initRepos() {
 	di.repo.findUserByEmailRepo = findUserByEmailRepo.New(di.infr.db)
 	di.repo.findUserByIDRepo = findUserByIDRepo.New(di.infr.db)
 	di.repo.updateUserInfoRepo = updateUserInfoRepo.New(di.infr.db)
+
+	di.repo.createGfrResultRepo = createGfrResultRepo.New(di.infr.db)
+	di.repo.getGfrResultsRepo = getGfrResultsRepo.New(di.infr.db)
 }
 
 func (di *DI) initUsecases() {
@@ -198,6 +215,11 @@ func (di *DI) initUsecases() {
 	di.useCases.logoutUsecase = logoutUsecase.New()
 
 	di.useCases.tokensRefreshUsecase = tokensRefreshUsecase.New(di.config.TokensRefreshUsecaseConfig)
+
+	di.useCases.calcUsecase = calcUsecase.New(di.repo.findUserByIDRepo)
+	di.useCases.calcPublicUsecase = calcPublicUsecase.New()
+	di.useCases.saveResultUsecase = saveResultUsecase.New(di.repo.findUserByIDRepo, di.repo.createGfrResultRepo)
+	di.useCases.getResultsUsecase = getResultsUsecase.New(di.repo.getGfrResultsRepo)
 }
 
 func (di *DI) initServer() {
@@ -220,6 +242,10 @@ func (di *DI) initAPI() {
 		di.useCases.logoutUsecase,
 
 		di.useCases.tokensRefreshUsecase,
+		di.useCases.calcUsecase,
+		di.useCases.calcPublicUsecase,
+		di.useCases.saveResultUsecase,
+		di.useCases.getResultsUsecase,
 	)
 
 	di.api.Route()

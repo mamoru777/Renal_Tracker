@@ -1,0 +1,4 @@
+.calculator-bg {
+  --highlight-bg: #cdeff1;
+  background-color: var(--highlight-bg);
+}

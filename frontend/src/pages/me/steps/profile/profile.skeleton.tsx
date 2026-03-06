@@ -1,8 +1,8 @@
 import { PageSection } from '@/components/page-section';
 import { Skeleton } from '@/components/skeleton';
-import styles from './me.module.css';
+import styles from './profile.module.css';
 
-export function MeSkeleton() {
+export function ProfileSkeleton() {
   return (
     <PageSection>
       <h1>Данные пользователя</h1>

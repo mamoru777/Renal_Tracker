@@ -14,6 +14,11 @@ import {
   SecuredRoute,
 } from '@/modules/auth';
 import { ErrorBoundary as DefaultErrorBoundary } from '@/modules/error-boundary';
+import {
+  createCalcGfrAuthorized,
+  createCalcGfrUnauthorized,
+  createSaveGfrResult,
+} from '@/modules/gfr-calculator';
 import { GlobalSpinner } from '@/modules/global-spinner';
 import { PageLayout } from '@/modules/page-layout';
 import { Toast } from '@/modules/toast';
@@ -22,10 +27,14 @@ import { Auth } from '@/pages/auth';
 import { Join } from '@/pages/join';
 import { Main } from '@/pages/main';
 import {
-  createLoadPageData as createMeLoadPageData,
-  createPageActions as createMePageActions,
+  Analyzes,
+  createEditProfileAction,
+  createLoadAuthenticatedUserGfrResultsData,
+  createLoadProfilePageData,
   Me,
-  MeSkeleton,
+  meMiddleware,
+  Profile,
+  ProfileSkeleton,
 } from '@/pages/me';
 
 const queryClient = new QueryClient({
@@ -44,6 +53,10 @@ const routes = createBrowserRouter([
     ErrorBoundary: DefaultErrorBoundary,
     hydrateFallbackElement: <Spinner fullScreen active />,
     children: [
+      {
+        action: createCalcGfrUnauthorized(),
+        path: appRoutes.CALC_GFR_UNAUTH,
+      },
       {
         Component: PageLayout,
         ErrorBoundary: DefaultErrorBoundary,
@@ -77,10 +90,31 @@ const routes = createBrowserRouter([
               },
               {
                 Component: Me,
-                loader: createMeLoadPageData(queryClient),
-                action: createMePageActions(queryClient),
                 path: appRoutes.ME,
-                HydrateFallback: MeSkeleton,
+                middleware: [meMiddleware],
+                children: [
+                  {
+                    action: createEditProfileAction(queryClient),
+                    loader: createLoadProfilePageData(queryClient),
+                    path: appRoutes.ME_PROFILE,
+                    Component: Profile,
+                    HydrateFallback: ProfileSkeleton,
+                  },
+                  {
+                    loader:
+                      createLoadAuthenticatedUserGfrResultsData(queryClient),
+                    path: appRoutes.ME_ANALYZES,
+                    Component: Analyzes,
+                  },
+                  {
+                    action: createCalcGfrAuthorized(),
+                    path: appRoutes.CALC_GFR_AUTH,
+                  },
+                  {
+                    action: createSaveGfrResult(),
+                    path: appRoutes.GFR_SAVE,
+                  },
+                ],
               },
             ],
           },
@@ -91,7 +125,6 @@ const routes = createBrowserRouter([
 ]);
 
 const primeConfig = {
-  inputStyle: 'filled',
   ripple: true,
 } as const;
 

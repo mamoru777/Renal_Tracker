@@ -28,8 +28,8 @@ export function Numeric({
   disabled,
   isInvalid,
   fluid,
-  // prefix,
-  // suffix,
+  prefix,
+  suffix,
 }: Props) {
   const id = useId();
 
@@ -62,7 +62,7 @@ export function Numeric({
     <div className={styles.container}>
       <FloatLabel className={cn({ 'p-fluid': fluid })}>
         <InputNumber
-          id={id}
+          inputId={id}
           onChange={onChangeEvent}
           value={resolvedValue}
           disabled={disabled}
@@ -70,9 +70,9 @@ export function Numeric({
           className={cn({ 'p-fluid': fluid })}
           allowEmpty
           useGrouping={false}
-          // TODO: buggy InputNumber for ios. Check decimal values and cmd+backspace behaviour before enable
-          // prefix={prefix}
-          // suffix={suffix}
+          prefix={prefix}
+          suffix={suffix}
+          maxFractionDigits={5}
         />
         <label htmlFor={id}>{label}</label>
       </FloatLabel>

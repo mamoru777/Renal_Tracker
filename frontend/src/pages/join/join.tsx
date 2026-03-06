@@ -8,7 +8,7 @@ import { PageSection } from '@/components/page-section';
 import { appRoutes } from '@/constants/routes';
 import { defaultLogger } from '@/lib/logger';
 import { toastProvider } from '@/modules/toast';
-import { validatePassword } from '@/utils/validators';
+import { validateNotLaterThanNow, validatePassword } from '@/utils/validators';
 import { submitJoin } from './actions';
 import type { JoinForm } from './types';
 import styles from './join.module.css';
@@ -162,6 +162,9 @@ export function Join() {
                   isInvalid={fieldState.invalid}
                 />
               )}
+              rules={{
+                validate: validateNotLaterThanNow,
+              }}
             />
             <Controller
               name="sex"

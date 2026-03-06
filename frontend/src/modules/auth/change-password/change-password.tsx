@@ -4,6 +4,7 @@ import { Dialog } from 'primereact/dialog';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
+import { PRIME_ICONS } from '@/constants/icons';
 import { defaultLogger } from '@/lib/logger';
 import { toastProvider } from '@/modules/toast';
 import { validatePassword } from '@/utils/validators';
@@ -56,7 +57,7 @@ export function ChangePassword({ className }: Props) {
   return (
     <>
       <Button
-        icon="pi pi-key"
+        icon={PRIME_ICONS.KEY}
         className={cn(styles.button, className)}
         onClick={() => setIsActive(true)}
         type="secondary"
