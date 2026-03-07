@@ -25,7 +25,9 @@ func (g *GetGfrResultsRepo) GetGfrResults(ctx context.Context, userID string, re
 
 	q := sq.Select(
 		"*",
-	).From(gfrDDL.Table).Where(sq.Eq{gfrDDL.ColumnUserID: userID})
+	).From(gfrDDL.Table).
+		Where(sq.Eq{gfrDDL.ColumnUserID: userID}).
+		Where(sq.Eq{gfrDDL.ColumnIsDeleted: false})
 
 	if len(req.IDs) > 0 {
 		q = q.Where(sq.Eq{gfrDDL.ColumnID: req.IDs})

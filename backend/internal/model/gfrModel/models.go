@@ -27,6 +27,8 @@ type GfrResult struct {
 	IsAbsolute         *bool                                  `db:"is_absolute"`
 	CreatedAt          time.Time                              `db:"created_at"`
 	CreatinineTestDate time.Time                              `db:"creatinine_test_date"`
+	IsDeleted          bool                                   `db:"is_deleted"`
+	DeletedAt          *time.Time                             `db:"deleted_at"`
 }
 
 func (g *GfrResult) ConvertToResultPkg() getResultsPkg.Result {

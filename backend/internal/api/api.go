@@ -4,6 +4,7 @@ import (
 	"renal_tracker/internal/service/tokenService"
 	"renal_tracker/internal/usecase/gfrUsecase/calcPublicUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/calcUsecase"
+	"renal_tracker/internal/usecase/gfrUsecase/deleteUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/getResultsUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/saveResultUsecase"
 	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
@@ -16,6 +17,7 @@ import (
 	"renal_tracker/internal/usecase/userUsecase/updateUserInfoUsecase"
 	"renal_tracker/pkg/gfr/calcPkg"
 	"renal_tracker/pkg/gfr/calcPublicPkg"
+	"renal_tracker/pkg/gfr/deletePkg"
 	"renal_tracker/pkg/gfr/getResultsPkg"
 	"renal_tracker/pkg/gfr/saveResultPkg"
 	"renal_tracker/pkg/token/tokensRefreshPkg"
@@ -45,10 +47,11 @@ type API struct {
 	logoutUsecase         *logoutUsecase.UseCase
 	tokensRefreshUsecase  *tokensRefreshUsecase.UseCase
 
-	calcUsecase       *calcUsecase.UseCase
-	calcPublicUsecase *calcPublicUsecase.UseCase
-	saveResultUsecase *saveResultUsecase.UseCase
-	getResultsUsecase *getResultsUsecase.UseCase
+	calcUsecase         *calcUsecase.UseCase
+	calcPublicUsecase   *calcPublicUsecase.UseCase
+	saveResultUsecase   *saveResultUsecase.UseCase
+	getResultsUsecase   *getResultsUsecase.UseCase
+	deleteResultUsecase *deleteUsecase.UseCase
 }
 
 func New(
@@ -66,6 +69,7 @@ func New(
 	calcPublicUsecase *calcPublicUsecase.UseCase,
 	saveResultUsecase *saveResultUsecase.UseCase,
 	getResultsUsecase *getResultsUsecase.UseCase,
+	deleteResultUsecase *deleteUsecase.UseCase,
 ) *API {
 	return &API{
 		app:                   app,
@@ -78,10 +82,11 @@ func New(
 		logoutUsecase:         logoutUsecase,
 		tokensRefreshUsecase:  tokensRefreshUsecase,
 
-		calcUsecase:       calcUsecase,
-		calcPublicUsecase: calcPublicUsecase,
-		saveResultUsecase: saveResultUsecase,
-		getResultsUsecase: getResultsUsecase,
+		calcUsecase:         calcUsecase,
+		calcPublicUsecase:   calcPublicUsecase,
+		saveResultUsecase:   saveResultUsecase,
+		getResultsUsecase:   getResultsUsecase,
+		deleteResultUsecase: deleteResultUsecase,
 	}
 }
 
@@ -119,4 +124,6 @@ func (a *API) Route() {
 	auth.Post(saveResultPkg.SaveResultV0MethodPath, a.saveResultUsecase.Execute)
 
 	auth.Get(getResultsPkg.GetResultsV0MethodPath, a.getResultsUsecase.Execute)
+
+	auth.Post(deletePkg.DeleteV0MethodPath, a.deleteResultUsecase.Execute)
 }

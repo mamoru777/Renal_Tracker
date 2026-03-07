@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS renal.gfr_results(
 
 -- +goose Down
 -- +goose StatementBegin
-
+DROP TABLE IF EXISTS renal.gfr_results;
 -- +goose StatementEnd

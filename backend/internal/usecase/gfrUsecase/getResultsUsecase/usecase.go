@@ -30,14 +30,8 @@ func New(getGfrResults getGfrResults) *UseCase {
 //		@Param		limit		query		int		false		"Сколько максимум записей нужно"
 //		@Param		offset		query		int		false		"Смещение по записям"
 //		@Success	200		{object}	getUserInfoPkg.GetUserInfoV0Response
-//		@Header 	200 	{string} 	accessToken "Новый access token"
-//		@Header 	200 	{string} 	refreshToken "Новый refresh token"
 //		@Failure	400		{object}	usecase.ErrorResponse
-//		@Header 	400 	{string} 	accessToken "Новый access token"
-//		@Header 	400 	{string} 	refreshToken "Новый refresh token"
 //		@Failure	500		{object}	usecase.ErrorResponse
-//		@Header 	500 	{string} 	accessToken "Новый access token"
-//		@Header 	500 	{string} 	refreshToken "Новый refresh token"
 //		@Router		/api/gfr/getResults [get]
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "getResultsUsecase").Logger()

@@ -5,7 +5,7 @@ import "renal_tracker/internal/ddl/pgsqlDDL"
 const (
 	Table          = pgsqlDDL.SchemaRenal + "." + "gfr_results"
 	TableWithAlias = Table + " " + alias
-	alias          = "gr"
+	alias          = "gfr"
 )
 
 const (
@@ -26,6 +26,8 @@ const (
 	ColumnIsAbsolute         = "is_absolute"
 	ColumnCreatedAt          = "created_at"
 	ColumnCreatinineTestDate = "creatinine_test_date"
+	ColumnIsDeleted          = "is_deleted"
+	ColumnDeletedAt          = "deleted_at"
 )
 
 func WithPrefix(column string) string {
