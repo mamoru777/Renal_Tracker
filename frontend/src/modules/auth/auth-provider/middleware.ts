@@ -9,29 +9,33 @@ export function createTokensMiddleware(
   queryClient: QueryClient,
 ): MiddlewareFunction {
   return async ({ context }, next) => {
-    const tokens = await queryClient.ensureQueryData({
-      queryKey: [QK_TOKEN],
-      queryFn: refreshTokens,
-      staleTime: (query) => {
-        const currentTokens = query.state.data;
-        if (currentTokens?.accessToken) {
-          return (
-            getTokenExpirationTime(currentTokens.accessToken).valueOf() -
-            Date.now() -
-            120 * 1000
-          );
-        }
+    try {
+      const tokens = await queryClient.ensureQueryData({
+        queryKey: [QK_TOKEN],
+        queryFn: refreshTokens,
+        staleTime: (query) => {
+          const currentTokens = query.state.data;
+          if (currentTokens?.accessToken) {
+            return (
+              getTokenExpirationTime(currentTokens.accessToken).valueOf() -
+              Date.now() -
+              120 * 1000
+            );
+          }
 
-        return 120 * 1000;
-      },
-    });
-
-    if (tokens?.accessToken) {
-      context.set(userCtx, {
-        initialized: true,
-        userId: getUserIdFromToken(tokens.accessToken),
+          return 120 * 1000;
+        },
       });
-    } else {
+
+      if (tokens?.accessToken) {
+        context.set(userCtx, {
+          initialized: true,
+          userId: getUserIdFromToken(tokens.accessToken),
+        });
+      } else {
+        context.set(userCtx, { initialized: true, userId: undefined });
+      }
+    } catch {
       context.set(userCtx, { initialized: true, userId: undefined });
     }
 

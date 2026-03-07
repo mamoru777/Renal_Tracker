@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { type SyntheticEvent, useId } from 'react';
 import cn from 'classnames';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Message } from 'primereact/message';
@@ -11,6 +11,7 @@ type Props = {
   label?: string;
   errorText?: string;
   onChange?: (e: FormBooleanEvent) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   disabled?: boolean;
   isInvalid?: boolean;
   tooltip?: string;
@@ -23,6 +24,7 @@ export function Toggle({
   isInvalid,
   label,
   onChange,
+  onBlur,
   checked,
   tooltip,
 }: Props) {
@@ -37,6 +39,7 @@ export function Toggle({
         <InputSwitch
           inputId={id}
           onChange={onChange}
+          onBlur={onBlur}
           checked={checked}
           disabled={disabled}
           invalid={isInvalid || Boolean(errorText)}

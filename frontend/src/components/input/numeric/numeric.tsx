@@ -13,6 +13,7 @@ type Props = {
   value?: number | string;
   errorText?: string;
   onChange?: (e: SyntheticEvent) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   disabled?: boolean;
   isInvalid?: boolean;
   fluid?: boolean;
@@ -23,6 +24,7 @@ type Props = {
 export function Numeric({
   label,
   onChange,
+  onBlur,
   value,
   errorText,
   disabled,
@@ -64,6 +66,7 @@ export function Numeric({
         <InputNumber
           inputId={id}
           onChange={onChangeEvent}
+          onBlur={onBlur}
           value={resolvedValue}
           disabled={disabled}
           invalid={isInvalid || Boolean(errorText)}

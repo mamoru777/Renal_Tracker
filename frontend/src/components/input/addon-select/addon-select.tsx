@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useId } from 'react';
+import { type FocusEvent, type SyntheticEvent, useId } from 'react';
 import cn from 'classnames';
 import { Dropdown } from 'primereact/dropdown';
 import type { FormEvent } from 'primereact/ts-helpers';
@@ -12,6 +12,7 @@ type Props<T extends { [key: string]: string }, V extends keyof T> = {
   defaultValue?: T[V];
   errorText?: string;
   onChange?: (e: FormEvent<T[V], SyntheticEvent>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   isInvalid?: boolean;
   className?: string;
   fluid?: boolean;
@@ -29,6 +30,7 @@ export function AddonSelect<
   labelPath,
   defaultValue,
   onChange,
+  onBlur,
   value,
   valuePath,
   posLeft,
@@ -46,6 +48,7 @@ export function AddonSelect<
       optionLabel={labelPath}
       optionValue={valuePath}
       onChange={onChange}
+      onBlur={onBlur}
       value={value}
       invalid={isInvalid}
       id={id}
