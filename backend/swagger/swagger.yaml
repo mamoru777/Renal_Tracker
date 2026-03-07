@@ -177,6 +177,13 @@ definitions:
     required:
     - isExists
     type: object
+  deletePkg.DeleteV0Request:
+    properties:
+      gfrID:
+        type: string
+    type: object
+  deletePkg.DeleteV0Response:
+    type: object
   getUserInfoPkg.GetUserInfoV0Response:
     properties:
       dateBirth:
@@ -386,46 +393,18 @@ paths:
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/calcPkg.CalcV0Response'
         "400":
           description: Bad Request
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "404":
           description: Not Found
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Рассчитать СКФ для авторизованных пользователей
@@ -454,6 +433,45 @@ paths:
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Рассчитать СКФ для неавторизованных пользователей
+      tags:
+      - gfr
+  /api/gfr/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: JWT access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh token cookie
+        in: header
+        name: Cookie
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/deletePkg.DeleteV0Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/deletePkg.DeleteV0Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/usecase.ErrorResponse'
+      summary: Удаление результата расчета
       tags:
       - gfr
   /api/gfr/getResults:
@@ -489,35 +507,14 @@ paths:
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/getUserInfoPkg.GetUserInfoV0Response'
         "400":
           description: Bad Request
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Получение результатов рассчета для пользователя
@@ -549,46 +546,18 @@ paths:
       responses:
         "200":
           description: OK
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/saveResultPkg.SaveResultV0Response'
         "400":
           description: Bad Request
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "404":
           description: Not Found
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
         "500":
           description: Internal Server Error
-          headers:
-            accessToken:
-              description: Новый access token
-              type: string
-            refreshToken:
-              description: Новый refresh token
-              type: string
           schema:
             $ref: '#/definitions/usecase.ErrorResponse'
       summary: Сохранить результат рассчета (только для авторизованных)

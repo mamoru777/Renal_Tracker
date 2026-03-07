@@ -57,64 +57,24 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/calcPkg.CalcV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -152,6 +112,65 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gfr/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gfr"
+                ],
+                "summary": "Удаление результата расчета",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Refresh token cookie",
+                        "name": "Cookie",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deletePkg.DeleteV0Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/deletePkg.DeleteV0Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
                         }
@@ -210,48 +229,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/getUserInfoPkg.GetUserInfoV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -299,64 +288,24 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/saveResultPkg.SaveResultV0Response"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/usecase.ErrorResponse"
-                        },
-                        "headers": {
-                            "accessToken": {
-                                "type": "string",
-                                "description": "Новый access token"
-                            },
-                            "refreshToken": {
-                                "type": "string",
-                                "description": "Новый refresh token"
-                            }
                         }
                     }
                 }
@@ -1007,6 +956,17 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "deletePkg.DeleteV0Request": {
+            "type": "object",
+            "properties": {
+                "gfrID": {
+                    "type": "string"
+                }
+            }
+        },
+        "deletePkg.DeleteV0Response": {
+            "type": "object"
         },
         "getUserInfoPkg.GetUserInfoV0Response": {
             "type": "object",
