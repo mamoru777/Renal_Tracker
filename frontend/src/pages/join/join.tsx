@@ -6,16 +6,17 @@ import { Card } from '@/components/card';
 import { Input } from '@/components/input';
 import { PageSection } from '@/components/page-section';
 import { appRoutes } from '@/constants/routes';
+import { ServerException } from '@/lib/exception';
 import { defaultLogger } from '@/lib/logger';
 import { toastProvider } from '@/modules/toast';
 import { validateNotLaterThanNow, validatePassword } from '@/utils/validators';
-import { submitJoin } from './actions';
+import { checkEmail, submitJoin } from './actions';
 import type { JoinForm } from './types';
 import styles from './join.module.css';
 
 export function Join() {
   const navigate = useNavigate();
-  const { handleSubmit, control } = useForm<JoinForm>({
+  const { handleSubmit, control, formState } = useForm<JoinForm>({
     defaultValues: {
       email: '',
       password: '',
@@ -26,7 +27,24 @@ export function Join() {
       patronymic: '',
       sex: undefined,
     },
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
   });
+
+  const validateEmail = useCallback(async (email: string) => {
+    try {
+      const isUnique = await checkEmail({ email });
+      return isUnique || 'Данный email уже зарегистрирован';
+    } catch (e: unknown) {
+      if (e instanceof ServerException) {
+        if (e.statusCode === 400) {
+          return 'Введите корректный email';
+        }
+      }
+
+      return 'Неизвестная ошибка, проверка email не удалась';
+    }
+  }, []);
 
   const handleJoin = useCallback(
     async (formData: JoinForm): Promise<void> => {
@@ -70,6 +88,7 @@ export function Join() {
                   ),
                   message: 'Неверно введен Email',
                 },
+                validate: validateEmail,
               }}
             />
             <Controller
@@ -181,7 +200,11 @@ export function Join() {
                 required: true,
               }}
             />
-            <Button htmlType="submit" className={styles.submit}>
+            <Button
+              htmlType="submit"
+              className={styles.submit}
+              loading={formState.isValidating}
+            >
               Войти
             </Button>
           </form>

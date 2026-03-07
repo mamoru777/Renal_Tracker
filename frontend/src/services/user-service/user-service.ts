@@ -8,6 +8,8 @@ import {
   mapUserToUpdateUserRequest,
 } from './mappers';
 import type {
+  CheckEmailRequestData,
+  CheckEmailResponseData,
   RegisterRequestData,
   RegisterResponseData,
   UpdateUserProfileRequestData,
@@ -47,6 +49,24 @@ export class UserService {
     });
 
     return response.data;
+  }
+
+  public async checkIsEmailUnique({
+    data,
+    signal,
+  }: ServiceRequest<CheckEmailRequestData, CheckEmailResponseData>): Promise<{
+    isUnique: boolean;
+  }> {
+    const response = await this.api.post<
+      CheckEmailRequestData,
+      CheckEmailResponseData
+    >({
+      url: '/user/checkEmail',
+      headers: this.headers,
+      signal,
+      data,
+    });
+    return { isUnique: !response.data.isExists };
   }
 
   public async getAuthenticatedUserInfo({

@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useId, useMemo } from 'react';
+import { type FocusEvent, type SyntheticEvent, useId, useMemo } from 'react';
 import cn from 'classnames';
 import { Calendar } from 'primereact/calendar';
 import { FloatLabel } from 'primereact/floatlabel';
@@ -11,6 +11,7 @@ type Props = {
   value?: Date;
   errorText?: string;
   onChange?: (e: FormEvent<Date, SyntheticEvent>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   isInvalid?: boolean;
   fluid?: boolean;
   disabled?: boolean;
@@ -19,6 +20,7 @@ type Props = {
 export function Date({
   label,
   onChange,
+  onBlur,
   value,
   errorText,
   isInvalid,
@@ -35,6 +37,7 @@ export function Date({
         <Calendar
           pt={ptOpts}
           onChange={onChange}
+          onBlur={onBlur}
           value={value}
           invalid={isInvalid || Boolean(errorText)}
           className={cn({ 'p-fluid': fluid })}

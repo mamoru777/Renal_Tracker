@@ -10,6 +10,7 @@ type Props = {
   value?: string;
   errorText?: string;
   onChange?: (e: SyntheticEvent) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   showMeter?: boolean;
   isInvalid?: boolean;
   fluid?: boolean;
@@ -18,6 +19,7 @@ type Props = {
 export function Password({
   label,
   onChange,
+  onBlur,
   value,
   errorText,
   showMeter,
@@ -33,6 +35,7 @@ export function Password({
           pt={{ input: { id } }}
           toggleMask
           onChange={onChange}
+          onBlur={onBlur}
           value={value}
           feedback={showMeter}
           invalid={isInvalid || Boolean(errorText)}

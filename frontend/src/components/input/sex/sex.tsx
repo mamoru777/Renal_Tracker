@@ -11,6 +11,7 @@ type Props = {
   value?: string;
   errorText?: string;
   onChange?: (e: FormEvent<string, SyntheticEvent>) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   disabled?: boolean;
   isInvalid?: boolean;
   fluid?: boolean;
@@ -22,6 +23,7 @@ export function Sex({
   isInvalid,
   label,
   onChange,
+  onBlur,
   value,
   fluid,
 }: Props) {
@@ -31,6 +33,7 @@ export function Sex({
         <span className={styles.labelText}>{label}</span>
         <SelectButton
           onChange={onChange}
+          onBlur={onBlur}
           value={value}
           disabled={disabled}
           invalid={isInvalid || Boolean(errorText)}

@@ -7,16 +7,21 @@ import {
 import { QK_CURRENT_USER, QK_TOKEN } from '@/constants/query-keys';
 import { appRoutes } from '@/constants/routes';
 import { renalTrackerAuthService } from '@/services/auth-service';
+import { resolvePageLoaderError } from '@/utils/helpers';
 import type { UserCtx } from './types';
 
 export function createAuthProviderLoader(
   queryClient: QueryClient,
 ): LoaderFunction<UserCtx> {
   return async function authProviderLoader() {
-    await queryClient.ensureQueryData({
-      queryKey: [QK_TOKEN],
-      queryFn: refreshTokens,
-    });
+    try {
+      await queryClient.ensureQueryData({
+        queryKey: [QK_TOKEN],
+        queryFn: refreshTokens,
+      });
+    } catch (e: unknown) {
+      return resolvePageLoaderError(e);
+    }
   };
 }
 

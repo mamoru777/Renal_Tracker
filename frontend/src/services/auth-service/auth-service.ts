@@ -146,6 +146,8 @@ export class AuthService {
             Authorization: `Bearer ${accessToken}`,
           },
         });
+      } else {
+        throw e;
       }
     }
 
