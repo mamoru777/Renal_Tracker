@@ -254,7 +254,7 @@ func (di *DI) initAPI() {
 func (di *DI) Start() error {
 	log.Info().Msg(fmt.Sprintf("starting server on port - %s", di.config.Port))
 
-	if err := di.app.Listen(fmt.Sprintf(":%s", di.config.Port)); err != nil {
+	if err := di.app.ListenTLS(fmt.Sprintf(":%s", di.config.Port), di.config.CertFile, di.config.KeyFile); err != nil {
 		return err
 	}
 

@@ -27,6 +27,8 @@ services:
       context: ../backend
       dockerfile: deploy/Dockerfile
     container_name: renal_app_service
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/
     restart: always
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
@@ -42,6 +44,9 @@ services:
       AUTH_SIGNING_KEY: ${AUTH_SIGNING_KEY}
       ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
       REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL}
+
+      CERT_FILE: /etc/letsencrypt/live/renal-tracker.ru/fullchain.pem
+      KEY_FILE: /etc/letsencrypt/live/renal-tracker.ru/privkey.pem
     depends_on:
       - postgres
     networks:
