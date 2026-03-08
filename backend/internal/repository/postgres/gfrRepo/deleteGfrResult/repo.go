@@ -17,7 +17,7 @@ func New(db sql.SQL) *DeleteGfrResultRepository {
 	return &DeleteGfrResultRepository{db: db}
 }
 
-func (d *DeleteGfrResultRepository) Delete(ctx context.Context, gfrID, userID string) error {
+func (d *DeleteGfrResultRepository) Delete(ctx context.Context, gfrID []string, userID string) error {
 	return d.db.Exec(ctx, sq.Update(gfrDDL.Table).
 		SetMap(map[string]interface{}{
 			gfrDDL.ColumnIsDeleted: true,

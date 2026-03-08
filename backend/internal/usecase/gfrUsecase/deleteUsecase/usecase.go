@@ -46,8 +46,8 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := u.delete.Delete(c.Context(), req.GfrID, userID); err != nil {
-		log.Error().Err(err).Msg(fmt.Sprintf("can not delete gfr result, gfr id is %s", req.GfrID))
+	if err := u.delete.Delete(c.Context(), req.GfrIDs, userID); err != nil {
+		log.Error().Err(err).Msg(fmt.Sprintf("can not delete gfr result, gfr ids are %v", req.GfrIDs))
 
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
