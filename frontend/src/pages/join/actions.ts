@@ -9,6 +9,18 @@ export async function submitJoin(formData: JoinForm): Promise<void> {
   return await createUser(formData);
 }
 
+export async function checkEmail({
+  email,
+}: {
+  email: string;
+}): Promise<boolean> {
+  const { isUnique } = await userService.checkIsEmailUnique({
+    data: { email },
+  });
+
+  return isUnique;
+}
+
 async function createUser(formData: JoinForm): Promise<void> {
   const { id } = await userService.register({ data: mapFormToUser(formData) });
 

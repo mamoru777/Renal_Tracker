@@ -1,4 +1,6 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { type ActionFunction, data } from 'react-router';
+import { QK_GFR_RESULTS_LIST } from '@/constants/query-keys';
 import type { GfrCalcParams } from '@/models/gfr-params';
 import { GfrService } from '@/services/gfr-service';
 import { resolvePageLoaderError } from '@/utils/helpers';
@@ -29,11 +31,12 @@ export function createCalcGfrAuthorized(): ActionFunction {
   };
 }
 
-export function createSaveGfrResult(): ActionFunction {
+export function createSaveGfrResult(queryClient: QueryClient): ActionFunction {
   return async function saveGfrResult({ request }) {
     try {
       const gfrParams = await request.json();
       const result = await performGfrSave(gfrParams);
+      queryClient.refetchQueries({ queryKey: [QK_GFR_RESULTS_LIST] });
       return data({ result }, { status: 200 });
     } catch (e: unknown) {
       return resolvePageLoaderError(e);

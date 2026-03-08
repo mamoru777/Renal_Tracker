@@ -5,7 +5,6 @@ import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { appRoutes } from '@/constants/routes';
 import { useAuthenticatedUser } from '@/modules/user';
-import { calculateAge } from '@/utils/helpers';
 import { validateNotLaterThanNow } from '@/utils/validators';
 import { CREATININE_CURRENCY_OPTIONS } from '../../constants';
 import { useGfrFetcher } from '../../context';
@@ -28,7 +27,6 @@ export function GfrAuthCalculator({ className }: Props) {
       isAbsolute: false,
       height: user.height,
       weight: user.weight,
-      age: user.birthdate ? calculateAge(new Date(user.birthdate)) : undefined,
     },
     shouldUnregister: true,
   });
@@ -94,7 +92,7 @@ export function GfrAuthCalculator({ className }: Props) {
           render={({ field, fieldState }) => (
             <Input.Number
               {...field}
-              label="Возраст"
+              label="Возраст в день анализов"
               errorText={fieldState.error?.message}
               isInvalid={fieldState.invalid}
               fluid
@@ -103,14 +101,6 @@ export function GfrAuthCalculator({ className }: Props) {
           rules={{
             required: true,
           }}
-        />
-      )}
-
-      {!!user.birthdate && (
-        <input
-          type="hidden"
-          {...register('age')}
-          value={calculateAge(new Date(user.birthdate))}
         />
       )}
 

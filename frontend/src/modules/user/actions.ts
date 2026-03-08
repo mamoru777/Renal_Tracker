@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { QK_CURRENT_USER, QK_USER } from '@/constants/query-keys';
+import { QK_CURRENT_USER } from '@/constants/query-keys';
 import { defaultLogger } from '@/lib/logger';
 import type { AuthorizedUser } from '@/models';
 import { UserService } from '@/services/user-service';
@@ -25,7 +25,7 @@ export function createEagerLoadAuthenticatedUserData(queryClient: QueryClient) {
   return async function loadAuthenticatedUserData(): Promise<void> {
     try {
       await queryClient.ensureQueryData({
-        queryKey: [QK_USER, QK_CURRENT_USER],
+        queryKey: [QK_CURRENT_USER],
         queryFn: fetchAuthUserInfo,
         revalidateIfStale: true,
       });
@@ -40,11 +40,11 @@ export async function saveUser(
   user: AuthorizedUser,
 ): Promise<AuthorizedUser> {
   try {
-    queryClient.cancelQueries({ queryKey: [QK_USER, QK_CURRENT_USER] });
+    queryClient.cancelQueries({ queryKey: [QK_CURRENT_USER] });
     const newUser = await userService.updateAuthenticatedUserInfo({
       data: user,
     });
-    queryClient.setQueryData([QK_USER, QK_CURRENT_USER], newUser);
+    queryClient.setQueryData([QK_CURRENT_USER], newUser);
     return newUser;
   } catch (e: unknown) {
     defaultLogger.error('Ошибка при попытке редактирования пользователя');

@@ -10,6 +10,7 @@ type Props = {
   value?: string;
   errorText?: string;
   onChange?: (e: SyntheticEvent) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   disabled?: boolean;
   isInvalid?: boolean;
   fluid?: boolean;
@@ -18,6 +19,7 @@ type Props = {
 export function Text({
   label,
   onChange,
+  onBlur,
   value,
   errorText,
   disabled,
@@ -31,6 +33,7 @@ export function Text({
       <FloatLabel className={cn({ 'p-fluid': fluid })}>
         <InputText
           id={id}
+          onBlur={onBlur}
           onChange={onChange}
           value={value}
           disabled={disabled}

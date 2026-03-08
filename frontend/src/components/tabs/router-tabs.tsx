@@ -8,6 +8,8 @@ type Props = {
   items: Array<MenuItem & { data: { path: string } }>;
 };
 
+const noop = () => {};
+
 export function RouterTabs({ className, items }: Props) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -27,6 +29,11 @@ export function RouterTabs({ className, items }: Props) {
   );
 
   return (
-    <Tabs className={className} activeIndex={activeIndex} items={routerItems} />
+    <Tabs
+      className={className}
+      activeIndex={activeIndex}
+      items={routerItems}
+      onTabChange={noop}
+    />
   );
 }

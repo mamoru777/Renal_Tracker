@@ -15,6 +15,7 @@ type Props<T extends { [key: string]: string }, V extends keyof T> = {
   label?: string;
   errorText?: string;
   onChange?: (e: FormEvent<T[V], SyntheticEvent>) => void;
+  onBlur?: (e: SyntheticEvent) => void;
   isInvalid?: boolean;
   className?: string;
   fluid?: boolean;
@@ -30,6 +31,7 @@ export function Select<T extends Record<string, string>, V extends keyof T>({
   labelPath,
   defaultValue,
   onChange,
+  onBlur,
   value,
   valuePath,
 }: Props<T, V>) {
@@ -44,6 +46,7 @@ export function Select<T extends Record<string, string>, V extends keyof T>({
           optionLabel={labelPath}
           optionValue={valuePath}
           onChange={onChange}
+          onBlur={onBlur}
           value={value}
           invalid={isInvalid}
           id={id}
