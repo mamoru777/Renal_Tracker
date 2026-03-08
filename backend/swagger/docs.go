@@ -960,8 +960,11 @@ const docTemplate = `{
         "deletePkg.DeleteV0Request": {
             "type": "object",
             "properties": {
-                "gfrID": {
-                    "type": "string"
+                "gfrIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

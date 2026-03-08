@@ -179,8 +179,10 @@ definitions:
     type: object
   deletePkg.DeleteV0Request:
     properties:
-      gfrID:
-        type: string
+      gfrIDs:
+        items:
+          type: string
+        type: array
     type: object
   deletePkg.DeleteV0Response:
     type: object
