@@ -3,6 +3,7 @@ package getResultsUsecase
 import (
 	"database/sql"
 	"errors"
+	"renal_tracker/internal/model/userModel"
 	"renal_tracker/pkg/gfr/getResultsPkg"
 	"renal_tracker/tools/pointer"
 	"strconv"
@@ -42,7 +43,7 @@ func New(getGfrResults getGfrResults) *UseCase {
 func (u *UseCase) Execute(c *fiber.Ctx) error {
 	log := log.With().Str("layer", "getResultsUsecase").Logger()
 
-	userID := c.Locals("userID").(string)
+	user := c.Locals("user").(userModel.User)
 
 	req := getResultsPkg.GetResultsV0Request{}
 
@@ -80,7 +81,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		req.Offset = pointer.Pointer(uint8(offset))
 	}
 
-	results, err := u.getGfrResults.GetGfrResults(c.Context(), userID, req)
+	results, err := u.getGfrResults.GetGfrResults(c.Context(), user.ID, req)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return c.SendStatus(fiber.StatusOK)

@@ -1,7 +1,6 @@
 package saveResultUsecase
 
 import (
-	"database/sql"
 	"errors"
 	"math"
 	"renal_tracker/internal/model/userModel"
@@ -18,13 +17,11 @@ var (
 )
 
 type UseCase struct {
-	findUserByID    findUserByID
 	createGfrResult createGfrResult
 }
 
-func New(findUserByID findUserByID, createGfrResult createGfrResult) *UseCase {
+func New(createGfrResult createGfrResult) *UseCase {
 	return &UseCase{
-		findUserByID:    findUserByID,
 		createGfrResult: createGfrResult,
 	}
 }
@@ -52,7 +49,7 @@ func New(findUserByID findUserByID, createGfrResult createGfrResult) *UseCase {
 func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 	log := log.With().Str("layer", "saveResultUsecase").Logger()
 
-	userID := c.Locals("userID").(string)
+	user := c.Locals("user").(userModel.User)
 
 	req := saveResultPkg.SaveResultV0Request{}
 
@@ -66,25 +63,6 @@ func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-	}
-
-	user := userModel.User{}
-
-	if req.Sex == nil || req.Age == nil || (req.IsAbsolute != nil && *req.IsAbsolute && ((req.Weight == nil || req.Height == nil) && req.BSA == nil)) {
-		user, err = u.findUserByID.FindUserByID(c.Context(), userID)
-		if err != nil {
-			log.Error().Err(err).Msg("can not find user by id")
-
-			if errors.Is(err, sql.ErrNoRows) {
-				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-					"error": err.Error(),
-				})
-			}
-
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
 	}
 
 	if user.ID != "" {
@@ -161,7 +139,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 		}
 	}
 
-	resultID, err := u.createGfrResult.CreateGfrResult(c.Context(), req, userID)
+	resultID, err := u.createGfrResult.CreateGfrResult(c.Context(), req, user.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("can not create gfr result")
 
