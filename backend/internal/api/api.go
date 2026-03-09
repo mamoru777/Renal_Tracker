@@ -36,6 +36,8 @@ import (
 type API struct {
 	app *fiber.App
 
+	tokenService *tokenService.TokenService
+
 	createUserUseCase     *createUserUsecase.UseCase
 	authUserUsecase       *authUserUsecase.UseCase
 	changePasswordUsecase *changePasswordUsecase.UseCase
@@ -53,6 +55,9 @@ type API struct {
 
 func New(
 	app *fiber.App,
+
+	tokenService *tokenService.TokenService,
+
 	createUserUseCase *createUserUsecase.UseCase,
 	authUserUsecase *authUserUsecase.UseCase,
 	changePasswordUsecase *changePasswordUsecase.UseCase,
@@ -68,7 +73,10 @@ func New(
 	getResultsUsecase *getResultsUsecase.UseCase,
 ) *API {
 	return &API{
-		app:                   app,
+		app: app,
+
+		tokenService: tokenService,
+
 		createUserUseCase:     createUserUseCase,
 		authUserUsecase:       authUserUsecase,
 		changePasswordUsecase: changePasswordUsecase,
@@ -104,7 +112,7 @@ func (a *API) Route() {
 
 	a.app.Post(calcPublicPkg.CalcPublicV0MethodPath, a.calcPublicUsecase.Execute)
 
-	auth := a.app.Group("/", tokenService.AuthMiddleware())
+	auth := a.app.Group("/", a.tokenService.AuthMiddleware())
 
 	auth.Post(updateInfoPkg.UpdateUserInfoV0MethodPath, a.updateUserInfoUsecase.Execute)
 

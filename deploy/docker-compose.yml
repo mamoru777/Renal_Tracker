@@ -38,6 +38,13 @@ services:
       PGSQL_EXCHANGE_PASSWORD: ${PGSQL_EXCHANGE_PASSWORD}
       PGSQL_EXCHANGE_DATABASE: ${PGSQL_EXCHANGE_DATABASE}
 
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+      USER_CACHE_TTL: ${USER_CACHE_TTL}
+
       AUTH_GENERAL_SALT: ${AUTH_GENERAL_SALT}
       AUTH_SIGNING_KEY: ${AUTH_SIGNING_KEY}
       ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
@@ -62,8 +69,28 @@ services:
     networks:
       - app-network
 
+  dragonfly:    
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: renal_cache
+    restart: always
+    ports:
+      - "${DRAGONFLY_PORT:-6379}:6379"  
+    environment:
+      - MAX_MEMORY=${DRAGONFLY_MAX_MEMORY:-4GB}
+      - REQUIREPASS=${REDIS_PASSWORD}
+    volumes:
+      - dragonfly_data:/data  
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
+  dragonfly_data:
 
 networks:
   app-network:
