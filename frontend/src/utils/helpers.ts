@@ -44,7 +44,7 @@ export function resolvePageLoaderError<T = unknown>(
   );
 }
 
-export function calculateAge(birthDate: Date) {
+export function calculateAge(birthDate: Date): number {
   const today = new Date();
 
   let age = today.getFullYear() - birthDate.getFullYear();
@@ -59,4 +59,14 @@ export function calculateAge(birthDate: Date) {
   }
 
   return age;
+}
+
+export function getAgeString(age: number): string {
+  const cases = [2, 0, 1, 1, 1, 2];
+  const titles = ['год', 'года', 'лет'];
+
+  const index =
+    age % 100 > 4 && age % 100 < 20 ? 2 : cases[Math.min(age % 10, 5)];
+
+  return `${age} ${titles[index]}`;
 }

@@ -5,3 +5,10 @@ export type ChartData = {
   currency: string | undefined;
   date: string | undefined;
 };
+
+export type ChartRawData = {
+  x: number | null;
+  y: number | null;
+  age: number | undefined;
+  currency: string | undefined;
+};

@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { type ActionFunction, data } from 'react-router';
-import { QK_GFR_RESULTS_LIST } from '@/constants/query-keys';
+import { QK_CURRENT_USER, QK_GFR_RESULTS_LIST } from '@/constants/query-keys';
 import type { GfrCalcParams } from '@/models/gfr-params';
 import { GfrService } from '@/services/gfr-service';
 import { resolvePageLoaderError } from '@/utils/helpers';
@@ -36,7 +36,9 @@ export function createSaveGfrResult(queryClient: QueryClient): ActionFunction {
     try {
       const gfrParams = await request.json();
       const result = await performGfrSave(gfrParams);
-      queryClient.refetchQueries({ queryKey: [QK_GFR_RESULTS_LIST] });
+      queryClient.invalidateQueries({
+        queryKey: [QK_CURRENT_USER, QK_GFR_RESULTS_LIST],
+      });
       return data({ result }, { status: 200 });
     } catch (e: unknown) {
       return resolvePageLoaderError(e);
