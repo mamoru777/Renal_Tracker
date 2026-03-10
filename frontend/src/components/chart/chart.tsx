@@ -3,6 +3,7 @@ import type {
   ChartOptions,
   Point,
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 import { Chart as PrimeChart } from 'primereact/chart';
 
 type Props<T extends 'line' | 'pie' | 'scatter', D, L> = {

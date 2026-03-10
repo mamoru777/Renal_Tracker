@@ -5,7 +5,7 @@ import { PageSection } from '@/components/page-section';
 import { QK_CURRENT_USER, QK_GFR_RESULTS_LIST } from '@/constants/query-keys';
 import { fetchAuthUserGfrResults } from '../../actions';
 import { CHART_OPTIONS } from './constants';
-import type { ChartData } from './types';
+import type { ChartData, ChartRawData } from './types';
 
 export function GfrChart() {
   const { data: gfrList } = useSuspenseQuery({
@@ -36,11 +36,11 @@ export function GfrChart() {
       datasets: [
         {
           label: 'Показатель СКФ пациента',
-          data: results.map(({ gfr, currency, date, age }) => ({
+          data: results.map<ChartRawData>(({ gfr, currency, date, age }) => ({
             y: gfr ?? null,
-            x: age ?? null,
+            x: date ? new Date(date).valueOf() : null,
             currency,
-            date,
+            age,
           })),
           type: 'scatter' as const,
           borderColor: 'red',
@@ -49,12 +49,14 @@ export function GfrChart() {
         },
         {
           label: 'Возрастной показатель СКФ',
-          data: results.map(({ gfrMinimum, currency, date, age }) => ({
-            y: gfrMinimum ?? null,
-            x: age ?? null,
-            currency,
-            date,
-          })),
+          data: results.map<ChartRawData>(
+            ({ gfrMinimum, currency, date, age }) => ({
+              y: gfrMinimum ?? null,
+              x: date ? new Date(date).valueOf() : null,
+              currency,
+              age,
+            }),
+          ),
           type: 'scatter' as const,
           borderColor: 'blue',
           tension: 0.2,
