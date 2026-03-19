@@ -10,10 +10,10 @@ services:
       dockerfile: Dockerfile
       args:
         - API_BASE_URL=/api
-        - API_URL=http://app:8080
+        - API_URL=https://app:8080
     environment: 
       API_BASE_URL: /api
-      API_URL: http://app:8080
+      API_URL: https://app:8080
     depends_on:
       - app
     container_name: renal_frontend
