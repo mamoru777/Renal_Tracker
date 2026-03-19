@@ -28,6 +28,9 @@ type Config struct {
 		RefreshTokenTTL string `env:"REFRESH_TOKEN_TTL"`
 	}
 
+	CertFile string `env:"CERT_FILE"`
+	KeyFile  string `env:"KEY_FILE"`
+
 	SetUserRepoConfig setUserRepo.Config
 
 	AuthUseCaseConfig authUserUsecase.Config
