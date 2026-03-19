@@ -1,7 +1,6 @@
 package calcUsecase
 
 import (
-	"database/sql"
 	"errors"
 	"math"
 	"renal_tracker/internal/enum/gfrCurrency"
@@ -13,7 +12,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -22,14 +20,10 @@ var (
 	ErrWeightHeightAreEmpty = errors.New("weight or/and height are empty")
 )
 
-type UseCase struct {
-	findUserByID findUserByID
-}
+type UseCase struct{}
 
-func New(findUserByID findUserByID) *UseCase {
-	return &UseCase{
-		findUserByID: findUserByID,
-	}
+func New() *UseCase {
+	return &UseCase{}
 }
 
 //		@Summary	Рассчитать СКФ для авторизованных пользователей
@@ -53,9 +47,7 @@ func New(findUserByID findUserByID) *UseCase {
 //		@Header 	500 	{string} 	refreshToken "Новый refresh token"
 //		@Router		/api/gfr/calc [post]
 func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
-	log := log.With().Str("layer", "calcUsecase").Logger()
-
-	userID := c.Locals("userID").(string)
+	user := c.Locals("user").(userModel.User)
 
 	req := calcPkg.CalcV0Request{}
 
@@ -69,25 +61,6 @@ func (u *UseCase) Execute(c *fiber.Ctx) (err error) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-	}
-
-	user := userModel.User{}
-
-	if req.Sex == nil || req.Age == nil || (req.IsAbsolute && ((req.Weight == nil || req.Height == nil) && req.BSA == nil)) {
-		user, err = u.findUserByID.FindUserByID(c.Context(), userID)
-		if err != nil {
-			log.Error().Err(err).Msg("can not find user by id")
-
-			if errors.Is(err, sql.ErrNoRows) {
-				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-					"error": err.Error(),
-				})
-			}
-
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
 	}
 
 	gfr, bsa, age, err := calc(req, user)

@@ -1,6 +1,7 @@
 package tokenService
 
 import (
+	"database/sql"
 	"errors"
 	"renal_tracker/internal/model/userModel"
 	jwtManager "renal_tracker/tools/jwt"
@@ -8,10 +9,29 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 )
 
-func AuthMiddleware() fiber.Handler {
+type TokenService struct {
+	findUserByID findUserByID
+	getUser      getUser
+	setUser      setUser
+}
+
+func New(
+	findUserByID findUserByID,
+	getUser getUser,
+	setUser setUser,
+) *TokenService {
+	return &TokenService{
+		findUserByID: findUserByID,
+		getUser:      getUser,
+		setUser:      setUser,
+	}
+}
+
+func (t *TokenService) AuthMiddleware() fiber.Handler {
 	log := log.With().Str("layer", "token service").Logger()
 
 	return func(c *fiber.Ctx) error {
@@ -59,7 +79,45 @@ func AuthMiddleware() fiber.Handler {
 				JSON(fiber.Map{"error": "user id is empty"})
 		}
 
-		c.Locals("userID", accessClaims.UserID)
+		user, err := t.getUser.GetUser(c.Context(), accessClaims.UserID)
+		if err != nil {
+			if !errors.Is(err, redis.Nil) {
+				log.Error().Err(err).Msg("can not get user from cache")
+
+				return c.Status(fiber.StatusInternalServerError).
+					JSON(fiber.Map{"error": "can not get user from cache"})
+			}
+		} else {
+			c.Locals("user", user)
+
+			return c.Next()
+		}
+
+		user, err = t.findUserByID.FindUserByID(c.Context(), accessClaims.UserID)
+		if err != nil {
+			log.Error().Err(err).Msg("can not find user by id")
+
+			if errors.Is(err, sql.ErrNoRows) {
+				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+					"error": "can not find user by id",
+				})
+			}
+
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "can not find user by id",
+			})
+		}
+
+		err = t.setUser.SetUser(c.Context(), user)
+		if err != nil {
+			log.Error().Err(err).Msg("can not set user to cache")
+
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "can not set user to cache",
+			})
+		}
+
+		c.Locals("user", user)
 
 		return c.Next()
 	}

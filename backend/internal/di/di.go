@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"renal_tracker/cfg"
 	"renal_tracker/internal/api"
+	getUserRepo "renal_tracker/internal/repository/dragonfly/userRepo/getUser"
+	setUserRepo "renal_tracker/internal/repository/dragonfly/userRepo/setUser"
 	createGfrResultRepo "renal_tracker/internal/repository/postgres/gfrRepo/createGfrResult"
 	getGfrResultsRepo "renal_tracker/internal/repository/postgres/gfrRepo/getGfrResults"
 	changePasswordRepo "renal_tracker/internal/repository/postgres/userRepo/changePassword"
@@ -14,6 +16,7 @@ import (
 	findUserByEmailRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByEmail"
 	findUserByIDRepo "renal_tracker/internal/repository/postgres/userRepo/findUserByID"
 	updateUserInfoRepo "renal_tracker/internal/repository/postgres/userRepo/updateUserInfo"
+	"renal_tracker/internal/service/tokenService"
 	"renal_tracker/internal/usecase/gfrUsecase/calcPublicUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/calcUsecase"
 	"renal_tracker/internal/usecase/gfrUsecase/getResultsUsecase"
@@ -38,6 +41,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/pressly/goose/v3"
 
+	toolsRedis "renal_tracker/tools/database/redis"
+
+	"github.com/redis/go-redis/v9"
+
 	pgsqlMigraions "renal_tracker/migrations/pgsql"
 )
 
@@ -46,17 +53,32 @@ type DI struct {
 
 	infr struct {
 		db *sql.DB
+
+		dragonfly struct {
+			userCache *redis.Client
+		}
 	}
 
 	repo struct {
-		createUserRepo      *createUserRepo.CreateUserRepo
-		changePasswordRepo  *changePasswordRepo.ChangePasswordRepo
-		findUserByEmailRepo *findUserByEmailRepo.FindUserByEmailRepo
-		findUserByIDRepo    *findUserByIDRepo.FindUserByIDRepo
-		updateUserInfoRepo  *updateUserInfoRepo.UpdateUserInfoRepo
+		postgres struct {
+			createUserRepo      *createUserRepo.CreateUserRepo
+			changePasswordRepo  *changePasswordRepo.ChangePasswordRepo
+			findUserByEmailRepo *findUserByEmailRepo.FindUserByEmailRepo
+			findUserByIDRepo    *findUserByIDRepo.FindUserByIDRepo
+			updateUserInfoRepo  *updateUserInfoRepo.UpdateUserInfoRepo
 
-		createGfrResultRepo *createGfrResultRepo.CreateGfrResultRepo
-		getGfrResultsRepo   *getGfrResultsRepo.GetGfrResultsRepo
+			createGfrResultRepo *createGfrResultRepo.CreateGfrResultRepo
+			getGfrResultsRepo   *getGfrResultsRepo.GetGfrResultsRepo
+		}
+
+		dragonfly struct {
+			setUserRepo *setUserRepo.SetUserRepo
+			getUserRepo *getUserRepo.GetUserRepo
+		}
+	}
+
+	services struct {
+		tokenService *tokenService.TokenService
 	}
 
 	useCases struct {
@@ -100,6 +122,8 @@ func (di *DI) Init(ctx context.Context) error {
 
 	di.initRepos()
 
+	di.initServices()
+
 	di.initUsecases()
 
 	di.initServer()
@@ -131,6 +155,13 @@ func (di *DI) loadCfg() error {
 	di.config.TokensRefreshUsecaseConfig.AccessTokenTTL = accessTokenTTL
 	di.config.TokensRefreshUsecaseConfig.RefreshTokenTTL = refreshTokenTTL
 
+	userCacheTTL, err := time.ParseDuration(di.config.SetUserRepoConfig.UserCacheTTLStr)
+	if err != nil {
+		return err
+	}
+
+	di.config.SetUserRepoConfig.UserCacheTTL = userCacheTTL
+
 	return nil
 }
 
@@ -145,6 +176,11 @@ func (di *DI) initInfra(ctx context.Context) (err error) {
 	)
 
 	di.infr.db, err = pgsql.NewClientPgsql(ctx, connectionURI)
+	if err != nil {
+		return err
+	}
+
+	di.infr.dragonfly.userCache, err = toolsRedis.NewClientRedis(di.config.Dragonfly, 0)
 	if err != nil {
 		return err
 	}
@@ -193,33 +229,46 @@ func (di *DI) initMigrations(ctx context.Context) error {
 func (di *DI) initRepos() {
 	log.Info().Msg("init repos")
 
-	di.repo.createUserRepo = createUserRepo.New(di.infr.db)
-	di.repo.changePasswordRepo = changePasswordRepo.New(di.infr.db)
-	di.repo.findUserByEmailRepo = findUserByEmailRepo.New(di.infr.db)
-	di.repo.findUserByIDRepo = findUserByIDRepo.New(di.infr.db)
-	di.repo.updateUserInfoRepo = updateUserInfoRepo.New(di.infr.db)
+	di.repo.postgres.createUserRepo = createUserRepo.New(di.infr.db)
+	di.repo.postgres.changePasswordRepo = changePasswordRepo.New(di.infr.db)
+	di.repo.postgres.findUserByEmailRepo = findUserByEmailRepo.New(di.infr.db)
+	di.repo.postgres.findUserByIDRepo = findUserByIDRepo.New(di.infr.db)
+	di.repo.postgres.updateUserInfoRepo = updateUserInfoRepo.New(di.infr.db)
 
-	di.repo.createGfrResultRepo = createGfrResultRepo.New(di.infr.db)
-	di.repo.getGfrResultsRepo = getGfrResultsRepo.New(di.infr.db)
+	di.repo.postgres.createGfrResultRepo = createGfrResultRepo.New(di.infr.db)
+	di.repo.postgres.getGfrResultsRepo = getGfrResultsRepo.New(di.infr.db)
+
+	di.repo.dragonfly.setUserRepo = setUserRepo.New(di.config.SetUserRepoConfig, di.infr.dragonfly.userCache)
+	di.repo.dragonfly.getUserRepo = getUserRepo.New(di.infr.dragonfly.userCache)
+}
+
+func (di *DI) initServices() {
+	log.Info().Msg("init services")
+
+	di.services.tokenService = tokenService.New(
+		di.repo.postgres.findUserByIDRepo,
+		di.repo.dragonfly.getUserRepo,
+		di.repo.dragonfly.setUserRepo,
+	)
 }
 
 func (di *DI) initUsecases() {
 	log.Info().Msg("init usecases")
 
-	di.useCases.createUserUseCase = createUserUsecase.New(di.repo.createUserRepo, di.repo.findUserByEmailRepo)
-	di.useCases.authUserUsecase = authUserUsecase.New(di.config.AuthUseCaseConfig, di.repo.findUserByEmailRepo, di.repo.updateUserInfoRepo)
-	di.useCases.changePasswordUsecase = changePasswordUsecase.New(di.repo.findUserByIDRepo, di.repo.changePasswordRepo)
-	di.useCases.checkEmailUsecase = checkEmailUsecase.New(di.repo.findUserByEmailRepo)
-	di.useCases.updateUserInfoUsecase = updateUserInfoUsecase.New(di.repo.updateUserInfoRepo, di.repo.findUserByIDRepo)
-	di.useCases.getUserInfoUsecase = getUserInfoUsecase.New(di.repo.findUserByIDRepo)
+	di.useCases.createUserUseCase = createUserUsecase.New(di.repo.postgres.createUserRepo, di.repo.postgres.findUserByEmailRepo)
+	di.useCases.authUserUsecase = authUserUsecase.New(di.config.AuthUseCaseConfig, di.repo.postgres.findUserByEmailRepo, di.repo.postgres.updateUserInfoRepo)
+	di.useCases.changePasswordUsecase = changePasswordUsecase.New(di.repo.postgres.changePasswordRepo)
+	di.useCases.checkEmailUsecase = checkEmailUsecase.New(di.repo.postgres.findUserByEmailRepo)
+	di.useCases.updateUserInfoUsecase = updateUserInfoUsecase.New(di.repo.postgres.updateUserInfoRepo)
+	di.useCases.getUserInfoUsecase = getUserInfoUsecase.New()
 	di.useCases.logoutUsecase = logoutUsecase.New()
 
 	di.useCases.tokensRefreshUsecase = tokensRefreshUsecase.New(di.config.TokensRefreshUsecaseConfig)
 
-	di.useCases.calcUsecase = calcUsecase.New(di.repo.findUserByIDRepo)
+	di.useCases.calcUsecase = calcUsecase.New()
 	di.useCases.calcPublicUsecase = calcPublicUsecase.New()
-	di.useCases.saveResultUsecase = saveResultUsecase.New(di.repo.findUserByIDRepo, di.repo.createGfrResultRepo)
-	di.useCases.getResultsUsecase = getResultsUsecase.New(di.repo.getGfrResultsRepo)
+	di.useCases.saveResultUsecase = saveResultUsecase.New(di.repo.postgres.createGfrResultRepo)
+	di.useCases.getResultsUsecase = getResultsUsecase.New(di.repo.postgres.getGfrResultsRepo)
 }
 
 func (di *DI) initServer() {
@@ -233,6 +282,9 @@ func (di *DI) initAPI() {
 
 	di.api = api.New(
 		di.app,
+
+		di.services.tokenService,
+
 		di.useCases.createUserUseCase,
 		di.useCases.authUserUsecase,
 		di.useCases.changePasswordUsecase,

@@ -9,24 +9,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 
+	"renal_tracker/internal/model/userModel"
 	_ "renal_tracker/internal/usecase"
 )
 
 var (
-	ErrNoUser                 = errors.New("No such user with this email")
 	ErrInvalidEmailOrPassword = errors.New("Invalid old password")
 )
 
 type UseCase struct {
-	findUserByID   findUserByID
 	changePassword changePassword
 }
 
-func New(findUserByID findUserByID, changePassword changePassword) *UseCase {
-	return &UseCase{
-		findUserByID:   findUserByID,
-		changePassword: changePassword,
-	}
+func New(changePassword changePassword) *UseCase {
+	return &UseCase{}
 }
 
 //		@Summary	Смена пароля
@@ -57,22 +53,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	userID := c.Locals("userID").(string)
-
-	user, err := u.findUserByID.FindUserByID(c.Context(), userID)
-	if err != nil {
-		log.Error().Err(err).Msg("can not find user by id")
-
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	if user.ID == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": ErrNoUser,
-		})
-	}
+	user := c.Locals("user").(userModel.User)
 
 	if err := passwordManager.CompareHashAndPassword(user.PasswordHash, []byte(req.OldPassword), user.PasswordSalt, []byte(cfg.Load().Auth.GeneralSalt)); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -102,7 +83,7 @@ func (u *UseCase) Execute(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := u.changePassword.ChangePassword(c.Context(), userID, passwordHash, passwordSalt); err != nil {
+	if err := u.changePassword.ChangePassword(c.Context(), user.ID, passwordHash, passwordSalt); err != nil {
 		log.Error().Err(err).Msg("can not change password")
 
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -1,9 +1,12 @@
 package cfg
 
 import (
+	setUserRepo "renal_tracker/internal/repository/dragonfly/userRepo/setUser"
 	"renal_tracker/internal/usecase/tokenUsecase/tokensRefreshUsecase"
 	"renal_tracker/internal/usecase/userUsecase/authUserUsecase"
 	"renal_tracker/tools/env"
+
+	"renal_tracker/tools/database/redis"
 )
 
 type Config struct {
@@ -16,6 +19,8 @@ type Config struct {
 		Database string `env:"PGSQL_EXCHANGE_DATABASE"`
 	}
 
+	Dragonfly redis.RedisConfigEnv
+
 	Auth struct {
 		GeneralSalt     string `env:"AUTH_GENERAL_SALT"`
 		SigningKey      string `env:"AUTH_SIGNING_KEY"`
@@ -25,6 +30,8 @@ type Config struct {
 
 	CertFile string `env:"CERT_FILE"`
 	KeyFile  string `env:"KEY_FILE"`
+
+	SetUserRepoConfig setUserRepo.Config
 
 	AuthUseCaseConfig authUserUsecase.Config
 
