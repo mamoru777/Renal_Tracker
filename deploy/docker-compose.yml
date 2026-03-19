@@ -11,9 +11,14 @@ services:
       args:
         - API_BASE_URL=/api
         - API_URL=https://app:8080
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/    
     environment: 
       API_BASE_URL: /api
       API_URL: https://app:8080
+
+      CERT_FILE: /etc/letsencrypt/live/renal-tracker.ru/fullchain.pem
+      KEY_FILE: /etc/letsencrypt/live/renal-tracker.ru/privkey.pem
     depends_on:
       - app
     container_name: renal_frontend
